@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.currency.sys.mapper.SysUserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.currency.sys.entity.SysUser">
+        <id column="user_id" property="userId" />
+        <result column="user_code" property="userCode" />
+        <result column="user_name" property="userName" />
+        <result column="user_photo" property="userPhoto" />
+        <result column="realname" property="realname" />
+        <result column="tenant_id" property="tenantId" />
+        <result column="email" property="email" />
+        <result column="id_num" property="idNum" />
+        <result column="id_type" property="idType" />
+        <result column="phone" property="phone" />
+        <result column="password" property="password" />
+        <result column="salt" property="salt" />
+        <result column="user_type" property="userType" />
+        <result column="create_date" property="createDate" />
+        <result column="status_cd" property="statusCd" />
+        <result column="create_user" property="createUser" />
+        <result column="update_user" property="updateUser" />
+        <result column="update_date" property="updateDate" />
+        <result column="remark" property="remark" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        user_id, user_code, user_name, user_photo, realname, tenant_id, email, id_num, id_type, phone, password, salt, user_type, create_date, status_cd, create_user, update_user, update_date, remark
+    </sql>
+
+</mapper>
