@@ -1,11 +1,13 @@
 package com.currency.sys.controller;
 
 
+import com.currency.sys.dto.SysTenantDTO;
 import com.currency.sys.service.ISysTenantService;
+import com.currency.utils.BaseResult;
+import com.currency.utils.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -17,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2021-07-03
  */
 @RestController
-@RequestMapping("/sys/sys-tenant")
+@RequestMapping("/sys/sysTenant")
 public class SysTenantController {
 
     @Autowired
@@ -25,8 +27,17 @@ public class SysTenantController {
 
 
     @GetMapping("test")
-    public String test(){
-//        sysTenantService.add();
-        return "测试成功";
+    public BaseResult test(){
+        try{
+            SysTenantDTO sysTenantDTO = new SysTenantDTO();
+            sysTenantDTO.setStatusCd("1");
+            sysTenantDTO.setTenantCode("test");
+            sysTenantDTO.setTenantName("123");
+
+            return sysTenantService.addSysTenant(sysTenantDTO);
+        }catch (Exception e){
+            return ResultUtil.error(e);
+        }
+
     }
 }

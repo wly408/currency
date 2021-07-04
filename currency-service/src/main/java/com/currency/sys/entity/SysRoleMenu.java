@@ -1,15 +1,12 @@
 package com.currency.sys.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
-import java.util.Date;
-
+import com.currency.common.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+
+import java.util.Date;
 
 /**
  * <p>
@@ -21,9 +18,8 @@ import lombok.experimental.Accessors;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
 @ApiModel(value="SysRoleMenu对象", description="")
-public class SysRoleMenu implements Serializable {
+public class SysRoleMenu extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -63,17 +59,5 @@ public class SysRoleMenu implements Serializable {
 
     public static final String MENU_ID = "menu_id";
 
-    public static final String TENANT_ID = "tenant_id";
 
-    public static final String STATUS_CD = "status_cd";
-
-    public static final String CREATE_USER = "create_user";
-
-    public static final String CREATE_DATE = "create_date";
-
-    public static final String UPDATE_USER = "update_user";
-
-    public static final String UPDATE_DATE = "update_date";
-
-    public static final String REMARK = "remark";
 }

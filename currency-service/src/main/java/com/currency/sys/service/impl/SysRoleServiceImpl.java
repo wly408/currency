@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.currency.sys.entity.SysRole;
 import com.currency.sys.mapper.SysRoleMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.currency.sys.service.ISysRoleService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +16,5 @@ import org.springframework.stereotype.Service;
  * @since 2021-07-03
  */
 @Service
-public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements IService<SysRole> {
-
+public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements ISysRoleService{
 }

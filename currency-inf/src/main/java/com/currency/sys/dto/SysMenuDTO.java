@@ -5,9 +5,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
-
-import java.io.Serializable;
 
 /**
 * <p>
@@ -19,11 +16,8 @@ import java.io.Serializable;
 */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
 @ApiModel(value="SysMenu对象", description="")
-public class SysMenuDTO extends BaseDTO implements Serializable {
-
-private static final long serialVersionUID = 1L;
+public class SysMenuDTO extends BaseDTO  {
 
 @ApiModelProperty(value = "主键")
 

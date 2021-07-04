@@ -1,5 +1,8 @@
 package com.currency.sys.service;
 
+import com.currency.sys.dto.SysTenantDTO;
+import com.currency.utils.BaseResult;
+
 /**
  * <p>
  * 租户表 服务类
@@ -9,5 +12,10 @@ package com.currency.sys.service;
  * @since 2021-07-03
  */
 public interface ISysTenantService {
+
+
+    BaseResult addSysTenant(SysTenantDTO sysTenantDTO);
+
+
 
 }

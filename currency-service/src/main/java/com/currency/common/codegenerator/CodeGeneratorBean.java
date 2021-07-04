@@ -59,7 +59,7 @@ public class CodeGeneratorBean {
     public class MyDataSourceConfig extends DataSourceConfig {
         public MyDataSourceConfig() {
             this.setUrl("jdbc:mysql://127.0.0.1:3306/currency?serverTimezone=UTC&zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF-8");
-            this.setDriverName("com.mysql.cj.jdbc.Driver");
+            this.setDriverName("com.mysql.jdbc.Driver");
             this.setUsername("root");
             this.setPassword("123456");
         }

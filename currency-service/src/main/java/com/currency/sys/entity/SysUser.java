@@ -2,14 +2,11 @@ package com.currency.sys.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
-import java.util.Date;
-
+import com.currency.common.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -21,11 +18,8 @@ import lombok.experimental.Accessors;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
 @ApiModel(value="SysUser对象", description="用户表")
-public class SysUser implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class SysUser extends BaseEntity {
 
     @ApiModelProperty(value = "主键")
     @TableId(value = "user_id", type = IdType.INPUT)
@@ -66,26 +60,6 @@ public class SysUser implements Serializable {
 
     @ApiModelProperty(value = "用户类型：0：通用1：管理员2：用户")
     private String userType;
-
-    @ApiModelProperty(value = "创建时间")
-    private Date createDate;
-
-    @ApiModelProperty(value = "状态")
-    private String statusCd;
-
-    @ApiModelProperty(value = "创建人")
-    private String createUser;
-
-    @ApiModelProperty(value = "修改人")
-    private String updateUser;
-
-    @ApiModelProperty(value = "修改时间")
-    private Date updateDate;
-
-    @ApiModelProperty(value = "备注")
-    private String remark;
-
-
     public static final String USER_ID = "user_id";
 
     public static final String USER_CODE = "user_code";
@@ -95,8 +69,6 @@ public class SysUser implements Serializable {
     public static final String USER_PHOTO = "user_photo";
 
     public static final String REALNAME = "realname";
-
-    public static final String TENANT_ID = "tenant_id";
 
     public static final String EMAIL = "email";
 
@@ -112,16 +84,5 @@ public class SysUser implements Serializable {
 
     public static final String USER_TYPE = "user_type";
 
-    public static final String CREATE_DATE = "create_date";
-
-    public static final String STATUS_CD = "status_cd";
-
-    public static final String CREATE_USER = "create_user";
-
-    public static final String UPDATE_USER = "update_user";
-
-    public static final String UPDATE_DATE = "update_date";
-
-    public static final String REMARK = "remark";
 
 }

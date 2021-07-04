@@ -1,5 +1,8 @@
 package com.currency.sys.service;
 
+import com.currency.sys.dto.SysUserDTO;
+import com.currency.utils.BaseResult;
+
 /**
  * <p>
  * 用户表 服务类
@@ -9,5 +12,7 @@ package com.currency.sys.service;
  * @since 2021-07-03
  */
 public interface ISysUserService  {
+
+    BaseResult addUser(SysUserDTO sysUserDTO);
 
 }
