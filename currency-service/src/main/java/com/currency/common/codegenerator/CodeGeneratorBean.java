@@ -104,7 +104,7 @@ public class CodeGeneratorBean {
             // 策略配置
             this.setNaming(NamingStrategy.underline_to_camel);
             this.setColumnNaming(NamingStrategy.underline_to_camel);
-//        this.setSuperEntityClass("com.currency.common.entity.BaseEntity");
+        this.setSuperEntityClass("com.currency.common.entity.BaseEntity");
 //        strategy.setSuperEntityClass("Serializable");
 
 
@@ -123,13 +123,14 @@ public class CodeGeneratorBean {
 //            this.setSuperEntityClass("com.ly.myspringboot.common.entity.BaseEntity");
             //表字段大写
             this.setCapitalMode(true);
+            this.setSuperServiceClass(null);
+            this.setSuperEntityColumns("create_date","create_user","tenant_id","update_date","update_user","remark","status_cd");
 
 
         }
 
     }
 
-    @Data
     public class MyInjectionConfig extends InjectionConfig {
         public MyInjectionConfig() {
             //添加add 请求对象
