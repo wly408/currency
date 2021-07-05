@@ -1,6 +1,8 @@
 package com.currency.sys.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.currency.sys.dto.SysUserDTO;
 import com.currency.sys.entity.SysUserRole;
 import com.currency.sys.mapper.SysUserRoleMapper;
 import com.currency.sys.service.ISysUserRoleService;
@@ -16,5 +18,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUserRole> implements ISysUserRoleService {
+
 
 }

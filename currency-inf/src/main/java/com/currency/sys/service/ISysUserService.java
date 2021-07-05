@@ -15,4 +15,7 @@ public interface ISysUserService  {
 
     BaseResult addUser(SysUserDTO sysUserDTO);
 
+    SysUserDTO getSysUserByUserCodeAndUserType(String userCode,String userType);
+
+
 }
