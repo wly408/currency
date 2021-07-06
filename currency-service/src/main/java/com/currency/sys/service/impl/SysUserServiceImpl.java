@@ -11,6 +11,7 @@ import com.currency.sys.service.ISysUserService;
 import com.currency.utils.BaseResult;
 import com.currency.utils.ObjectUtil;
 import com.currency.utils.ResultUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -51,4 +52,5 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         }
         return null;
     }
+
 }
