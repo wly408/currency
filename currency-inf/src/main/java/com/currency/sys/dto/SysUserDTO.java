@@ -1,5 +1,6 @@
 package com.currency.sys.dto;
 
+import com.currency.sys.common.dto.BaseDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,7 +17,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="SysUser对象", description="用户表")
-public class SysUserDTO  {
+public class SysUserDTO extends BaseDTO {
 
 
 @ApiModelProperty(value = "主键")

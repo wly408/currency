@@ -35,6 +35,9 @@ public class AuthService {
 
     public String createToken(LoginRequest loginRequest) {
         SysUserDTO user = sysUserService.getSysUserByUserCodeAndUserType(loginRequest.getUsername(), CommonEnum.SYS_USER_TYPE_ADMIN.getValue());
+        if(user==null){
+            throw new BadCredentialsException("账号或者密码错误");
+        }
         if (!this.check(loginRequest.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("账号或者密码错误");
         }

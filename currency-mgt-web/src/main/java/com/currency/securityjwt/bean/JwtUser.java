@@ -28,6 +28,7 @@ public class JwtUser implements UserDetails {
         userId = user.getUserId();
         userCode = user.getUserCode();
         password = user.getPassword();
+        enabled = true;
 
         //角色
 //        authorities = Collections.singleton(new SimpleGrantedAuthority(user.getRole()));

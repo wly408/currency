@@ -11,7 +11,9 @@ import com.currency.sys.service.ISysUserService;
 import com.currency.utils.BaseResult;
 import com.currency.utils.ObjectUtil;
 import com.currency.utils.ResultUtil;
+import com.currency.utils.UUIDUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -29,10 +31,14 @@ import java.util.List;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
+    @Autowired
+    private  BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public BaseResult addUser(SysUserDTO sysUserDTO) {
         SysUser user = ObjectUtil.copy(sysUserDTO,SysUser.class);
+        user.setPassword(bCryptPasswordEncoder.encode(sysUserDTO.getPassword()));
+        user.setUserId(UUIDUtils.getUUID());
         this.save(user);
         return ResultUtil.suc();
     }

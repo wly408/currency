@@ -3,6 +3,7 @@ package com.currency.common.config;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.currency.common.util.SessionUtil;
+import com.currency.constrants.CommonConstrants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ public class MyBatisMetaObjectHandler implements MetaObjectHandler {
         this.setFieldVal("createUser",SessionUtil.getSessionBean().getUserId(),metaObject);
         this.setFieldVal("createDate",new Date(),metaObject);
         this.setFieldVal("tenantId",SessionUtil.getSessionBean().getTenantId(),metaObject);
+        this.setFieldVal("statusCd", CommonConstrants.COMMON_YES,metaObject);
 
     }
 
