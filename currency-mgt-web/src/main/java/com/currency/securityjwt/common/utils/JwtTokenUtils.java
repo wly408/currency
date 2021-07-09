@@ -1,6 +1,7 @@
 package com.currency.securityjwt.common.utils;
 
 import com.currency.securityjwt.common.constants.SecurityConstants;
+import com.currency.utils.DateUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -28,10 +29,11 @@ public class JwtTokenUtils {
     private static final byte[] API_KEY_SECRET_BYTES = DatatypeConverter.parseBase64Binary(SecurityConstants.JWT_SECRET_KEY);
     private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(API_KEY_SECRET_BYTES);
 
-    public static String createToken(String username, String id, List<String> roles, boolean isRememberMe) {
-        long expiration = isRememberMe ? SecurityConstants.EXPIRATION_REMEMBER : SecurityConstants.EXPIRATION;
+
+    public static String createToken(String username, String id, List<String> roles) {
+        //设置token长期有效
         final Date createdDate = new Date();
-        final Date expirationDate = new Date(createdDate.getTime() + expiration * 1000);
+        final Date expirationDate = DateUtil.addDays(createdDate,Integer.MAX_VALUE);
         String tokenPrefix = Jwts.builder()
                 .setHeaderParam("type", SecurityConstants.TOKEN_TYPE)
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)

@@ -1,9 +1,12 @@
 package com.currency.enums;
 
 public enum CommonEnum {
-    SYS_USER_TYPE_ADMIN("sysUserType","1","管理员")
+    SYS_USER_TYPE_ADMIN("sysUserType","1","管理员"),
+    SYS_USER_ID_ADMIN("sysUserId","1","超级管理员ID"),
+    SYS_USER_ID_UN_USER("sysUserId","-1","系统"),
 
-;
+
+    SYS_ROLE_GUEST("sysRole","GUEST","游客");
     private String group;
     private String value;
     private String name;

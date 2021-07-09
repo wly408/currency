@@ -65,6 +65,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler(new JwtAccessDeniedHandler());
         // 防止H2 web 页面的Frame 被拦截
         http.headers().frameOptions().disable();
+        //登录页面配置
+//        http.formLogin().loginPage("https://www.baidu.com/");
     }
 
     /**

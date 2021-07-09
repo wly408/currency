@@ -9,5 +9,5 @@ import lombok.Data;
 public class LoginRequest {
     private String username;
     private String password;
-    private Boolean rememberMe;
+    private String tenantId;
 }

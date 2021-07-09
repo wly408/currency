@@ -5,13 +5,10 @@ import com.currency.enums.CommonEnum;
 import com.currency.sys.dto.SysUserDTO;
 import com.currency.sys.service.ISysUserService;
 import com.currency.utils.BaseResult;
+import com.currency.utils.ResultUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -33,9 +30,25 @@ public class SysUserController {
 
     @PostMapping("/register")
     @ApiOperation("用户注册")
-    public BaseResult register(@RequestBody @Valid SysUserDTO userDTO){
-        userDTO.setUserType(CommonEnum.SYS_USER_TYPE_ADMIN.getValue());
-        return sysUserService.addUser(userDTO);
-
+    public BaseResult register(@RequestBody @Valid SysUserDTO userDTO) {
+        try {
+            userDTO.setUserType(CommonEnum.SYS_USER_TYPE_ADMIN.getValue());
+            return sysUserService.addUser(userDTO);
+        } catch (Exception e) {
+            return ResultUtil.error(e);
+        }
     }
+
+    @GetMapping("/getUser/{userId}")
+    @ApiOperation("根据ID获取用户")
+    public BaseResult<SysUserDTO> register(@PathVariable(value = "userId") String userId) {
+        try {
+            SysUserDTO userDTO = sysUserService.getSysUserByUserId(userId);
+            return ResultUtil.suc(userDTO);
+        } catch (Exception e) {
+            return ResultUtil.error(e);
+        }
+    }
+
+
 }
