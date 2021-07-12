@@ -6,8 +6,7 @@ import com.currency.dto.sys.QuerySysUserDTO;
 import com.currency.dto.sys.SysUserDTO;
 import com.currency.enums.CommonEnum;
 import com.currency.sys.service.ISysUserService;
-import com.currency.utils.BaseResult;
-import com.currency.utils.ResultUtil;
+import com.currency.utils.ResultHandler;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -32,34 +31,35 @@ public class SysUserController {
 
     @PostMapping("/register")
     @ApiOperation("用户注册")
-    public BaseResult register(@RequestBody @Valid SysUserDTO userDTO) {
+    public ResultHandler<String> register(@RequestBody @Valid SysUserDTO userDTO) {
         try {
             userDTO.setUserType(CommonEnum.SYS_USER_TYPE_ADMIN.getValue());
-            return sysUserService.addUser(userDTO);
+            String userId = sysUserService.addUser(userDTO);
+            return ResultHandler.suc(userId);
         } catch (Exception e) {
-            return ResultUtil.error(e);
+            return ResultHandler.error(e);
         }
     }
 
-    @GetMapping("/getUser/{userId}")
+    @GetMapping("/getUser")
     @ApiOperation("根据ID获取用户")
-    public BaseResult<SysUserDTO> register(@PathVariable(value = "userId") String userId) {
+    public ResultHandler<SysUserDTO> register(@RequestParam(value = "userId") String userId) {
         try {
             SysUserDTO userDTO = sysUserService.getSysUserByUserId(userId);
-            return ResultUtil.suc(userDTO);
+            return ResultHandler.suc(userDTO);
         } catch (Exception e) {
-            return ResultUtil.error(e);
+            return ResultHandler.error(e);
         }
     }
 
     @GetMapping("/list")
     @ApiOperation("根据ID获取用户")
-    public BaseResult<IPage> list(@RequestBody @Valid QuerySysUserDTO querySysUserDTO) {
+    public ResultHandler<IPage> list(@RequestBody QuerySysUserDTO querySysUserDTO) {
         try {
             IPage<SysUserDTO> page = sysUserService.list(querySysUserDTO);
-            return ResultUtil.suc(page);
+            return ResultHandler.suc(page);
         } catch (Exception e) {
-            return ResultUtil.error(e);
+            return ResultHandler.error(e);
         }
     }
 

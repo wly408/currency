@@ -38,7 +38,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public BaseResult addUser(SysUserDTO sysUserDTO) {
+    public String addUser(SysUserDTO sysUserDTO) {
         String tenantId = sysUserDTO.getTenantId();
         if (StringUtils.isEmpty(tenantId)) {
             tenantId = LoginContextUtil.getTenantId();
@@ -48,7 +48,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         user.setPassword(bCryptPasswordEncoder.encode(sysUserDTO.getPassword()));
         user.setUserId(UUIDUtils.getUUID());
         this.save(user);
-        return ResultUtil.suc();
+        return user.getUserId();
     }
 
     private void check(String userId, String userCode, String userType, String tenantId) {

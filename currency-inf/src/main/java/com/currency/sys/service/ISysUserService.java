@@ -4,8 +4,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.currency.dto.sys.QuerySysUserDTO;
 import com.currency.dto.sys.SysUserDTO;
 
-import com.currency.utils.BaseResult;
-
 /**
  * <p>
  * 用户表 服务类
@@ -16,7 +14,7 @@ import com.currency.utils.BaseResult;
  */
 public interface ISysUserService  {
 
-    BaseResult addUser(SysUserDTO sysUserDTO);
+    String addUser(SysUserDTO sysUserDTO);
 
     SysUserDTO getSysUserByUserCodeAndUserType(String userCode,String userType,String tenantId);
 

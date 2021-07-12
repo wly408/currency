@@ -3,9 +3,8 @@ package com.currency.sys.controller;
 
 import com.currency.dto.sys.SysMenuDTO;
 import com.currency.sys.service.ISysMenuService;
-import com.currency.utils.BaseResult;
+import com.currency.utils.ResultHandler;
 import com.currency.utils.LoginContextUtil;
-import com.currency.utils.ResultUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,12 +31,12 @@ public class SysMenuController {
     @GetMapping("/getCurrentUserSysMenuList")
     @ApiOperation("获取当前用户的菜单列表")
 
-    public BaseResult<List<SysMenuDTO>> getCurrentUserSysMenuList() {
+    public ResultHandler<List<SysMenuDTO>> getCurrentUserSysMenuList() {
         try {
-            List<SysMenuDTO> list =  sysMenuService.getUserSysMenuByUserId(LoginContextUtil.getUserId());
-            return ResultUtil.suc(list);
+            List<SysMenuDTO> list = sysMenuService.getUserSysMenuByUserId(LoginContextUtil.getUserId());
+            return ResultHandler.suc(list);
         } catch (Exception e) {
-            return ResultUtil.error(e);
+            return ResultHandler.error(e);
         }
 
     }

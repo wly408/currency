@@ -1,7 +1,8 @@
 package com.currency.sys.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.currency.dto.sys.QuerySysTenantDTO;
 import com.currency.dto.sys.SysTenantDTO;
-import com.currency.utils.BaseResult;
 
 /**
  * <p>
@@ -14,8 +15,8 @@ import com.currency.utils.BaseResult;
 public interface ISysTenantService {
 
 
-    BaseResult addSysTenant(SysTenantDTO sysTenantDTO);
+    String addTenant(SysTenantDTO sysTenantDTO);
 
 
-
+    IPage<SysTenantDTO> list(QuerySysTenantDTO querySysTenantDTO);
 }

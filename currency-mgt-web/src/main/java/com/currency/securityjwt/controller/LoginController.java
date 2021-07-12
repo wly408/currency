@@ -3,9 +3,8 @@ package com.currency.securityjwt.controller;
 import com.currency.securityjwt.bean.LoginRequest;
 import com.currency.securityjwt.common.constants.SecurityConstants;
 import com.currency.securityjwt.service.AuthService;
-import com.currency.utils.BaseResult;
+import com.currency.utils.ResultHandler;
 import com.currency.utils.CaptchaUtil;
-import com.currency.utils.ResultUtil;
 import com.currency.utils.UUIDUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,20 +38,21 @@ public class LoginController {
 
     @PostMapping("/login")
     @ApiOperation("登录")
-    public BaseResult<String> login(@RequestBody LoginRequest loginRequest) {
+    public ResultHandler<String> login(@RequestBody LoginRequest loginRequest) {
         String token = authService.createToken(loginRequest);
-        return ResultUtil.suc(token);
+        return ResultHandler.suc(token);
     }
 
     @PostMapping("/logout")
     @ApiOperation("退出")
-    public BaseResult<Void> logout() {
+    public ResultHandler<Void> logout() {
         authService.removeToken();
-        return ResultUtil.suc();
+        return ResultHandler.suc();
     }
 
     /**
      * 获取验证码
+     *
      * @param request
      * @param response
      * @throws IOException
