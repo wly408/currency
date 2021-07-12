@@ -11,6 +11,14 @@ public final class SecurityConstants {
      **/
     public static final String ROLE_CLAIMS = "rol";
 
+    /**
+     * 验证码过期时间
+     */
+    public static final long  VERIFY_CODE_EXPIRATION = 5*60L;
+
+    public static final String  VERIFY_CODE_UID = "verifyCodeUid";
+
+
 
 
     /**
@@ -45,8 +53,12 @@ public final class SecurityConstants {
 
     // System WHITELIST
     public static final String[] SYSTEM_WHITELIST = {
+            //登录
             "/auth/login",
-            "/sys/user/register"
+            //注册
+            "/sys/user/register",
+            //验证码
+            "/auth/createCode"
     };
 
     private SecurityConstants() {

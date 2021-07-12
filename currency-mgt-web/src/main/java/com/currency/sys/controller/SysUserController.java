@@ -1,7 +1,9 @@
 package com.currency.sys.controller;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.currency.enums.CommonEnum;
+import com.currency.sys.dto.QuerySysUserDTO;
 import com.currency.sys.dto.SysUserDTO;
 import com.currency.sys.service.ISysUserService;
 import com.currency.utils.BaseResult;
@@ -45,6 +47,17 @@ public class SysUserController {
         try {
             SysUserDTO userDTO = sysUserService.getSysUserByUserId(userId);
             return ResultUtil.suc(userDTO);
+        } catch (Exception e) {
+            return ResultUtil.error(e);
+        }
+    }
+
+    @GetMapping("/list")
+    @ApiOperation("根据ID获取用户")
+    public BaseResult<IPage> list(@RequestBody @Valid QuerySysUserDTO querySysUserDTO) {
+        try {
+            IPage<SysUserDTO> page = sysUserService.list(querySysUserDTO);
+            return ResultUtil.suc(page);
         } catch (Exception e) {
             return ResultUtil.error(e);
         }

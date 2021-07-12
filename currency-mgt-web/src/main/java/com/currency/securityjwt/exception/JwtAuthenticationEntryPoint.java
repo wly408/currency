@@ -2,6 +2,7 @@ package com.currency.securityjwt.exception;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +21,10 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "非法请求,请进行认证");
+        String msg = "非法请求,请进行认证";
+        if(authException!=null&& !StringUtils.isEmpty(authException.getMessage())){
+            msg = authException.getMessage();
+        }
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, msg);
     }
 }

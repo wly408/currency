@@ -8,6 +8,7 @@ import com.currency.securityjwt.common.utils.JwtTokenUtils;
 import com.currency.sys.dto.SysUserDTO;
 import com.currency.sys.service.ISysUserService;
 import com.currency.utils.LoginContextUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -36,6 +37,18 @@ public class AuthService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public String createToken(LoginRequest loginRequest) {
+        String verifyCodeUid = loginRequest.getVerifyCodeUid();
+        String verifyCode = loginRequest.getVerifyCode();
+
+        if(StringUtils.isEmpty(verifyCodeUid)||StringUtils.isEmpty(verifyCode)){
+            throw new BadCredentialsException("验证码为空");
+        }
+        //校验验证码
+        String realVerifyCode = stringRedisTemplate.opsForValue().get(verifyCodeUid);
+        if(!verifyCode.equalsIgnoreCase(realVerifyCode)){
+            throw new BadCredentialsException("验证码错误");
+        }
+        stringRedisTemplate.delete(verifyCodeUid);
         SysUserDTO user = sysUserService.getSysUserByUserCodeAndUserType(loginRequest.getUsername(), CommonEnum.SYS_USER_TYPE_ADMIN.getValue(),loginRequest.getTenantId());
         if(user==null){
             throw new BadCredentialsException("账号或者密码错误");

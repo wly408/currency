@@ -1,5 +1,7 @@
 package com.currency.sys.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.currency.sys.dto.QuerySysUserDTO;
 import com.currency.sys.dto.SysUserDTO;
 import com.currency.utils.BaseResult;
 
@@ -17,9 +19,9 @@ public interface ISysUserService  {
 
     SysUserDTO getSysUserByUserCodeAndUserType(String userCode,String userType,String tenantId);
 
-
-
     SysUserDTO getSysUserByUserId(String userId);
+
+    IPage<SysUserDTO> list(QuerySysUserDTO querySysUserDTO);
 
 
 }
