@@ -1,13 +1,12 @@
 package com.currency.securityjwt.config;
 
-import com.currency.securityjwt.common.constants.SecurityConstants;
+import com.currency.securityjwt.bean.SecurityJwtConfig;
 import com.currency.securityjwt.exception.JwtAccessDeniedHandler;
 import com.currency.securityjwt.exception.JwtAuthenticationEntryPoint;
 import com.currency.securityjwt.filter.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -31,7 +30,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private  StringRedisTemplate stringRedisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 密码编码器
@@ -50,9 +49,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 // 指定的接口直接放行
                 // swagger
-                .antMatchers(SecurityConstants.SWAGGER_WHITELIST).permitAll()
-                .antMatchers(SecurityConstants.H2_CONSOLE).permitAll()
-                .antMatchers(HttpMethod.POST, SecurityConstants.SYSTEM_WHITELIST).permitAll()
+                .antMatchers(SecurityJwtConfig.getInstance().getWhiteList()).permitAll()
                 // 其他的接口都需要认证后才能请求
                 .anyRequest().authenticated()
                 .and()
@@ -79,7 +76,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         // configuration.setAllowedOriginPatterns(singletonList("*"));
         configuration.setAllowedHeaders(singletonList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "OPTIONS"));
-        configuration.setExposedHeaders(singletonList(SecurityConstants.TOKEN_HEADER));
+        configuration.setExposedHeaders(singletonList(SecurityJwtConfig.getInstance().getTokenHeader()));
         configuration.setAllowCredentials(false);
         configuration.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

@@ -3,7 +3,7 @@ package com.currency.securityjwt.filter;
 import com.currency.bean.LoginContext;
 import com.currency.dto.sys.SysUserDTO;
 import com.currency.securityjwt.bean.JwtUser;
-import com.currency.securityjwt.common.constants.SecurityConstants;
+import com.currency.securityjwt.bean.SecurityJwtConfig;
 import com.currency.securityjwt.common.utils.JwtTokenUtils;
 import com.currency.sys.service.ISysUserService;
 import com.currency.utils.LoginContextUtil;
@@ -43,14 +43,14 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                                     FilterChain chain) throws IOException, ServletException {
         LoginContextUtil.clearLoginContext();
         //1.从头部获取token
-        String token = request.getHeader(SecurityConstants.TOKEN_HEADER);
+        String token = request.getHeader(SecurityJwtConfig.getInstance().getTokenHeader());
         //2.token为空或者不符合规则直接放行？
-        if (token == null || !token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+        if (token == null || !token.startsWith(SecurityJwtConfig.getInstance().getTokenPrefix())) {
             SecurityContextHolder.clearContext();
             chain.doFilter(request, response);
             return;
         }
-        String tokenValue = token.replace(SecurityConstants.TOKEN_PREFIX, "");
+        String tokenValue = token.replace(SecurityJwtConfig.getInstance().getTokenPrefix(), "");
         UsernamePasswordAuthenticationToken authentication = null;
         try {
             String claimsId = JwtTokenUtils.getId(tokenValue);
@@ -80,7 +80,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             LoginContextUtil.setLoginContext(loginContext);
 
             //刷新token
-            stringRedisTemplate.opsForValue().set(claimsId, token, SecurityConstants.EXPIRATION, TimeUnit.SECONDS);
+            stringRedisTemplate.opsForValue().set(claimsId, token, SecurityJwtConfig.getInstance().getExpiration(), TimeUnit.SECONDS);
         } catch (JwtException e) {
             logger.error("Invalid jwt : " + e.getMessage());
         }

@@ -47,6 +47,7 @@ public final class LoginContextUtil {
         return null;
     }
     public final static String getTenantId(){
+
         LoginContext loginContext = threadLocal.get();
         if(loginContext!=null){
             return loginContext.getTenantId();

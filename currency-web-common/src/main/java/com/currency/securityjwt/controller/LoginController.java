@@ -1,10 +1,10 @@
 package com.currency.securityjwt.controller;
 
 import com.currency.securityjwt.bean.LoginRequest;
-import com.currency.securityjwt.common.constants.SecurityConstants;
+import com.currency.securityjwt.bean.SecurityJwtConfig;
 import com.currency.securityjwt.service.AuthService;
-import com.currency.utils.ResultHandler;
 import com.currency.utils.CaptchaUtil;
+import com.currency.utils.ResultHandler;
 import com.currency.utils.UUIDUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -70,8 +70,8 @@ public class LoginController {
         CaptchaUtil util = CaptchaUtil.Instance();
         // 将验证码输入到session中，用来验证
         String code = util.getString();
-        stringRedisTemplate.opsForValue().set(uid, code, SecurityConstants.VERIFY_CODE_EXPIRATION, TimeUnit.SECONDS);
-        response.setHeader(SecurityConstants.VERIFY_CODE_UID, uid);
+        stringRedisTemplate.opsForValue().set(uid, code, SecurityJwtConfig.getInstance().getVerifyCodeExpiration(), TimeUnit.SECONDS);
+        response.setHeader(SecurityJwtConfig.getInstance().getVerifyCodeUid(), uid);
         request.getSession().setAttribute("code", code);
         // 输出到web页面
         ImageIO.write(util.getImage(), "jpg", response.getOutputStream());
