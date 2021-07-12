@@ -55,7 +55,8 @@ public class SysTenantController {
     @ApiOperation("修改租户")
     public ResultHandler update(@RequestBody @Valid SysTenantDTO tenantDTO) {
         try {
-            return null;
+
+            return ResultHandler.suc();
         } catch (Exception e) {
             return ResultHandler.error(e);
         }
@@ -65,7 +66,8 @@ public class SysTenantController {
     @ApiOperation("删除租户")
     public ResultHandler del(@RequestParam(value = "tenantId") String tenantId) {
         try {
-            return null;
+            sysTenantService.delTenantByTenantId(tenantId);
+            return ResultHandler.suc();
         } catch (Exception e) {
             return ResultHandler.error(e);
         }

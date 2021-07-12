@@ -1,11 +1,13 @@
 package com.currency.securityjwt.service;
 
+import com.currency.dto.sys.SysTenantDTO;
 import com.currency.dto.sys.SysUserDTO;
 import com.currency.enums.CommonEnum;
 import com.currency.securityjwt.bean.JwtUser;
 import com.currency.securityjwt.bean.LoginRequest;
 import com.currency.securityjwt.common.constants.SecurityConstants;
 import com.currency.securityjwt.common.utils.JwtTokenUtils;
+import com.currency.sys.service.ISysTenantService;
 import com.currency.sys.service.ISysUserService;
 import com.currency.utils.LoginContextUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +36,10 @@ public class AuthService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+
+    @Autowired
+    private ISysTenantService sysTenantService;
+
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -60,6 +66,11 @@ public class AuthService {
         JwtUser jwtUser = new JwtUser(user);
         if (!jwtUser.isEnabled()) {
             throw new BadCredentialsException("用户状态异常");
+        }
+        String tenantId = user.getTenantId();
+        SysTenantDTO sysTenantDTO = sysTenantService.getTenantByTenantId(tenantId);
+        if(sysTenantDTO==null){
+            throw new BadCredentialsException("非法用户");
         }
         List<String> authorities = new ArrayList<>();
         Collection<? extends GrantedAuthority> authoritiesTemp = jwtUser.getAuthorities();

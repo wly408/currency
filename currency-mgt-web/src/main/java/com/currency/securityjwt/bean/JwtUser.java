@@ -1,10 +1,10 @@
 package com.currency.securityjwt.bean;
 
-import com.currency.common.utils.SpringUtil;
 import com.currency.dto.sys.SysRoleDTO;
 import com.currency.dto.sys.SysUserDTO;
 import com.currency.enums.CommonEnum;
 import com.currency.sys.service.ISysRoleService;
+import com.currency.utils.SpringUtil;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

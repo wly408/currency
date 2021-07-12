@@ -19,4 +19,13 @@ public interface ISysTenantService {
 
 
     IPage<SysTenantDTO> list(QuerySysTenantDTO querySysTenantDTO);
+
+    /**
+     * 删除租户
+     * @param tenantId
+     */
+    void delTenantByTenantId(String tenantId);
+
+
+    SysTenantDTO getTenantByTenantId(String tenantId);
 }

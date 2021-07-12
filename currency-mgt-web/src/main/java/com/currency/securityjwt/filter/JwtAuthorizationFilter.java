@@ -1,13 +1,13 @@
 package com.currency.securityjwt.filter;
 
 import com.currency.bean.LoginContext;
-import com.currency.common.utils.SpringUtil;
 import com.currency.dto.sys.SysUserDTO;
 import com.currency.securityjwt.bean.JwtUser;
 import com.currency.securityjwt.common.constants.SecurityConstants;
 import com.currency.securityjwt.common.utils.JwtTokenUtils;
 import com.currency.sys.service.ISysUserService;
 import com.currency.utils.LoginContextUtil;
+import com.currency.utils.SpringUtil;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -66,6 +66,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             ISysUserService sysUserService = SpringUtil.getBean(ISysUserService.class);
 
             SysUserDTO sysUserDTO = sysUserService.getSysUserByUserId(claimsId);
+
+
             LoginContext loginContext = new LoginContext();
             loginContext.setUserId(sysUserDTO.getUserId());
             loginContext.setUserCode(sysUserDTO.getUserCode());

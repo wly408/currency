@@ -2,6 +2,7 @@ package com.currency.sys.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.currency.constrants.CommonConstrants;
 import com.currency.dto.sys.QuerySysTenantDTO;
 import com.currency.dto.sys.SysTenantDTO;
 import com.currency.sys.entity.SysTenant;
@@ -33,6 +34,27 @@ public class SysTenantServiceImpl extends ServiceImpl<SysTenantMapper, SysTenant
 
     @Override
     public IPage<SysTenantDTO> list(QuerySysTenantDTO querySysTenantDTO) {
+        return null;
+    }
+
+    @Override
+    public void delTenantByTenantId(String tenantId) {
+
+        SysTenant sysTenant = this.getById(tenantId);
+        if (sysTenant != null) {
+            sysTenant.setStatusCd(CommonConstrants.COMMON_NO);
+            this.save(sysTenant);
+        }
+
+    }
+
+    @Override
+    public SysTenantDTO getTenantByTenantId(String tenantId) {
+        SysTenant sysTenant = this.getById(tenantId);
+        if (sysTenant != null && CommonConstrants.COMMON_YES.equals(sysTenant.getStatusCd())) {
+            return ObjectUtil.copy(sysTenant, SysTenantDTO.class);
+        }
+
         return null;
     }
 }
