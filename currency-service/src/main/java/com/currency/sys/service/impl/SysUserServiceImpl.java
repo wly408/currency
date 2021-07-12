@@ -96,7 +96,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     public IPage<SysUserDTO> list(QuerySysUserDTO querySysUserDTO) {
         //设置分页信息
         Page page = new Page(querySysUserDTO.getCurrent(), querySysUserDTO.getPagesize());
-        IPage pageInfo = this.baseMapper.list(page, querySysUserDTO);
+        QueryWrapper<QuerySysUserDTO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.setEntity(querySysUserDTO);
+        IPage pageInfo = this.baseMapper.list(page, queryWrapper);
         return pageInfo;
     }
 

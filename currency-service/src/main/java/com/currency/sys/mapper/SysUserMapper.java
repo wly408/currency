@@ -1,6 +1,8 @@
 package com.currency.sys.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.currency.sys.dto.QuerySysUserDTO;
 import com.currency.sys.dto.SysUserDTO;
 import com.currency.sys.entity.SysUser;
@@ -18,7 +20,7 @@ import org.apache.ibatis.annotations.Param;
 public interface SysUserMapper extends BaseMapper<SysUser> {
 
 
-    IPage<SysUserDTO> list(IPage<SysUserDTO> page, @Param("query") QuerySysUserDTO query);
+    IPage<SysUserDTO> list(IPage<SysUserDTO> page, @Param(Constants.WRAPPER) Wrapper<QuerySysUserDTO>  wrapper);
 
 
 }

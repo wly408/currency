@@ -25,6 +25,6 @@ spring:
           max-idle: 8
           # 连接池中的最小空闲连接 默认 0
           min-idle: 0
-
-
-
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
