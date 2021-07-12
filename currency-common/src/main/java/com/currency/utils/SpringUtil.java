@@ -1,4 +1,4 @@
-package com.currency.common.utils;
+package com.currency.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;

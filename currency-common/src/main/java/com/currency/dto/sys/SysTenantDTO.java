@@ -1,4 +1,4 @@
-package com.currency.sys.dto;
+package com.currency.dto.sys;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

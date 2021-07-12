@@ -1,6 +1,5 @@
 package com.currency.sys.service;
 
-import com.currency.sys.dto.SysUserDTO;
 
 /**
  * <p>

@@ -1,8 +1,9 @@
 package com.currency.sys.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.currency.sys.dto.QuerySysUserDTO;
-import com.currency.sys.dto.SysUserDTO;
+import com.currency.dto.sys.QuerySysUserDTO;
+import com.currency.dto.sys.SysUserDTO;
+
 import com.currency.utils.BaseResult;
 
 /**

@@ -1,7 +1,7 @@
 package com.currency.sys.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.currency.sys.dto.SysTenantDTO;
+import com.currency.dto.sys.SysTenantDTO;
 import com.currency.sys.entity.SysTenant;
 import com.currency.sys.mapper.SysTenantMapper;
 import com.currency.sys.service.ISysTenantService;

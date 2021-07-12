@@ -1,6 +1,6 @@
-package com.currency.sys.dto;
+package com.currency.dto.sys;
 
-import com.currency.sys.common.dto.BaseDTO;
+import com.currency.dto.BaseDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,7 +17,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="SysMenu对象", description="")
-public class SysMenuDTO extends BaseDTO  {
+public class SysMenuDTO extends BaseDTO {
 
 @ApiModelProperty(value = "主键")
 

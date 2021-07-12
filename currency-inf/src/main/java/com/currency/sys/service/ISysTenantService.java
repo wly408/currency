@@ -1,6 +1,6 @@
 package com.currency.sys.service;
 
-import com.currency.sys.dto.SysTenantDTO;
+import com.currency.dto.sys.SysTenantDTO;
 import com.currency.utils.BaseResult;
 
 /**

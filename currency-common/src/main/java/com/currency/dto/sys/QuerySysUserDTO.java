@@ -1,6 +1,6 @@
-package com.currency.sys.dto;
+package com.currency.dto.sys;
 
-import com.currency.sys.common.dto.PageDTO;
+import com.currency.dto.PageDTO;
 import lombok.Data;
 
 @Data

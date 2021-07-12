@@ -1,6 +1,6 @@
-package com.currency.sys.dto;
+package com.currency.dto.sys;
 
-import com.currency.sys.common.dto.BaseDTO;
+import com.currency.dto.BaseDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,7 +17,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="SysRole对象", description="角色表")
-public class SysRoleDTO extends BaseDTO  {
+public class SysRoleDTO extends BaseDTO {
 
 
 @ApiModelProperty(value = "角色ID")

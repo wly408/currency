@@ -25,5 +25,23 @@
     <sql id="Base_Column_List">
         menu_id, menu_name, parent_menu_id, menu_sort, menu_sn, menu_url, menu_icon, menu_type, tenant_id, status_cd, create_user, create_date, update_user, update_date, remark
     </sql>
+    <select id="getUserSysMenuByUserId" resultType="com.currency.dto.sys.SysMenuDTO">
+        SELECT
+            t.*
+        FROM
+            sys_menu t
+        WHERE
+            t.menu_id IN (
+                SELECT
+                    b.menu_id
+                FROM
+                    sys_role a
+                INNER JOIN sys_role_menu b ON a.role_id = b.role_id
+                INNER JOIN SYS_USER_ROLE C ON A.ROLE_ID=C.ROLE_ID
+                 where a.status_cd='1' and b.status_cd='1' and c.status_cd='1' and  C.user_id=#{userId}
+            )
+            and t.status_cd='1'
+
+    </select>
 
 </mapper>

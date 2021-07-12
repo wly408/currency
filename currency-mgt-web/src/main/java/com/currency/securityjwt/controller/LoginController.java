@@ -1,10 +1,10 @@
 package com.currency.securityjwt.controller;
 
-import com.currency.common.utils.CaptchaUtil;
 import com.currency.securityjwt.bean.LoginRequest;
 import com.currency.securityjwt.common.constants.SecurityConstants;
 import com.currency.securityjwt.service.AuthService;
 import com.currency.utils.BaseResult;
+import com.currency.utils.CaptchaUtil;
 import com.currency.utils.ResultUtil;
 import com.currency.utils.UUIDUtils;
 import io.swagger.annotations.Api;

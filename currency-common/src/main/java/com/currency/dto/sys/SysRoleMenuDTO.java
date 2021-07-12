@@ -1,6 +1,6 @@
-package com.currency.sys.dto;
+package com.currency.dto.sys;
 
-import com.currency.sys.common.dto.BaseDTO;
+import com.currency.dto.BaseDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

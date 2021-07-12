@@ -1,12 +1,12 @@
 package com.currency.sys.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.currency.sys.dto.QuerySysUserDTO;
-import com.currency.sys.dto.SysUserDTO;
+import com.currency.dto.sys.QuerySysUserDTO;
+import com.currency.dto.sys.SysUserDTO;
 import com.currency.sys.entity.SysUser;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
 /**

@@ -2,20 +2,19 @@ package com.currency.securityjwt.filter;
 
 import com.currency.bean.LoginContext;
 import com.currency.common.utils.SpringUtil;
+import com.currency.dto.sys.SysUserDTO;
+import com.currency.securityjwt.bean.JwtUser;
 import com.currency.securityjwt.common.constants.SecurityConstants;
 import com.currency.securityjwt.common.utils.JwtTokenUtils;
-import com.currency.sys.dto.SysUserDTO;
 import com.currency.sys.service.ISysUserService;
 import com.currency.utils.LoginContextUtil;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -32,8 +31,6 @@ import java.util.concurrent.TimeUnit;
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private final StringRedisTemplate stringRedisTemplate;
-
-
 
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager, StringRedisTemplate stringRedisTemplate) {
         super(authenticationManager);
@@ -66,7 +63,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             }
             authentication = JwtTokenUtils.getAuthentication(tokenValue);
             //获取当前登录用户
-            ISysUserService sysUserService =  SpringUtil.getBean(ISysUserService.class);
+            ISysUserService sysUserService = SpringUtil.getBean(ISysUserService.class);
+
             SysUserDTO sysUserDTO = sysUserService.getSysUserByUserId(claimsId);
             LoginContext loginContext = new LoginContext();
             loginContext.setUserId(sysUserDTO.getUserId());
@@ -74,6 +72,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             loginContext.setUserName(sysUserDTO.getUserName());
             loginContext.setUserType(sysUserDTO.getUserType());
             loginContext.setTenantId(sysUserDTO.getTenantId());
+            //获取用户角色权限
+            loginContext.setRoleList(JwtUser.getUserRole(claimsId));
+
             LoginContextUtil.setLoginContext(loginContext);
 
             //刷新token

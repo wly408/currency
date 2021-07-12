@@ -20,5 +20,9 @@
     <sql id="Base_Column_List">
         role_id, role_name, role_code, tenant_id, status_cd, create_user, create_date, update_user, update_date, remark
     </sql>
+    <select id="getRoleListByUserId" resultType="com.currency.dto.sys.SysRoleDTO">
+        SELECT A.* FROM SYS_ROLE A INNER JOIN SYS_USER_ROLE B ON A.ROLE_ID=B.ROLE_ID
+         WHERE A.STATUS_CD='1' AND B.STATUS_CD='1' AND B.USER_ID=#{userId}
+    </select>
 
 </mapper>

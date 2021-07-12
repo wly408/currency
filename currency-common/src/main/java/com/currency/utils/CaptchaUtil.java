@@ -1,4 +1,4 @@
-package com.currency.common.utils;
+package com.currency.utils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

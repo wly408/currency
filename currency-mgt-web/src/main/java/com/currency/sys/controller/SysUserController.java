@@ -2,9 +2,9 @@ package com.currency.sys.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.currency.dto.sys.QuerySysUserDTO;
+import com.currency.dto.sys.SysUserDTO;
 import com.currency.enums.CommonEnum;
-import com.currency.sys.dto.QuerySysUserDTO;
-import com.currency.sys.dto.SysUserDTO;
 import com.currency.sys.service.ISysUserService;
 import com.currency.utils.BaseResult;
 import com.currency.utils.ResultUtil;

@@ -1,7 +1,11 @@
 package com.currency.sys.mapper;
 
-import com.currency.sys.entity.SysRole;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.currency.dto.sys.SysRoleDTO;
+import com.currency.sys.entity.SysRole;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +17,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface SysRoleMapper extends BaseMapper<SysRole> {
 
+    List<SysRoleDTO> getRoleListByUserId(@Param("userId") String userId);
 }

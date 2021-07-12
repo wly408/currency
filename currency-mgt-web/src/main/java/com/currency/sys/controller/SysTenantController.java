@@ -1,7 +1,7 @@
 package com.currency.sys.controller;
 
 
-import com.currency.sys.dto.SysTenantDTO;
+import com.currency.dto.sys.SysTenantDTO;
 import com.currency.sys.service.ISysTenantService;
 import com.currency.utils.BaseResult;
 import com.currency.utils.ResultUtil;

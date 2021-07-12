@@ -63,8 +63,15 @@ DROP TABLE IF EXISTS `sys_role_menu`;
 CREATE TABLE `sys_role_menu` (
   `id` varchar(36) DEFAULT NULL COMMENT '主键',
   `role_id` varchar(36) DEFAULT NULL COMMENT '角色ID',
-  `menu_id` varchar(36) DEFAULT NULL COMMENT '菜单ID'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `menu_id` varchar(36) DEFAULT NULL COMMENT '菜单ID',
+  `tenant_id` varchar(36) NOT NULL COMMENT '租户ID',
+  `status_cd` varchar(2) DEFAULT NULL COMMENT ' 状态',
+  `create_user` varchar(36) NOT NULL COMMENT '创建人',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_user` varchar(36) DEFAULT NULL COMMENT '修改人',
+  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  `remark` varchar(500) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色菜单表';
 
 -- ----------------------------
 -- Table structure for sys_tenant

@@ -1,4 +1,4 @@
-package com.currency.sys.common.dto;
+package com.currency.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
