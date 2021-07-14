@@ -1,6 +1,7 @@
 package com.currency.sys.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.currency.constrants.CommonConstrants;
 import com.currency.dto.sys.QuerySysTenantDTO;
@@ -8,6 +9,7 @@ import com.currency.dto.sys.SysTenantDTO;
 import com.currency.sys.entity.SysTenant;
 import com.currency.sys.mapper.SysTenantMapper;
 import com.currency.sys.service.ISysTenantService;
+import com.currency.utils.LoginContextUtil;
 import com.currency.utils.ObjectUtil;
 import com.currency.utils.UUIDUtils;
 import org.springframework.stereotype.Service;
@@ -34,15 +36,18 @@ public class SysTenantServiceImpl extends ServiceImpl<SysTenantMapper, SysTenant
 
     @Override
     public IPage<SysTenantDTO> list(QuerySysTenantDTO querySysTenantDTO) {
-        return null;
+        LoginContextUtil.setQueryTenantId(querySysTenantDTO);
+        Page page = new Page(querySysTenantDTO.getCurrent(), querySysTenantDTO.getPagesize());
+        IPage<SysTenantDTO> pageInfo = this.baseMapper.list(page, querySysTenantDTO);
+
+        return pageInfo;
     }
 
     @Override
     public void delTenantByTenantId(String tenantId) {
-
         SysTenant sysTenant = this.getById(tenantId);
+        LoginContextUtil.hasDelAuthority(sysTenant);
         if (sysTenant != null) {
-            sysTenant.setStatusCd(CommonConstrants.COMMON_NO);
             this.save(sysTenant);
         }
 

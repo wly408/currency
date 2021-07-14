@@ -2,8 +2,9 @@ package com.currency.securityjwt.filter;
 
 import com.currency.bean.LoginContext;
 import com.currency.dto.sys.SysUserDTO;
+import com.currency.exception.IllegalRequestException;
 import com.currency.securityjwt.bean.JwtUser;
-import com.currency.securityjwt.bean.SecurityJwtConfig;
+import com.currency.securityjwt.config.SecurityJwtConfig;
 import com.currency.securityjwt.common.utils.JwtTokenUtils;
 import com.currency.sys.service.ISysUserService;
 import com.currency.utils.LoginContextUtil;
@@ -41,6 +42,17 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain) throws IOException, ServletException {
+
+        String url = request.getRequestURI();
+        String[] blackList = SecurityJwtConfig.getInstance().getBlackList();
+        if(blackList!=null&&blackList.length>0){
+            for (String blackUrl : blackList) {
+                if(url.indexOf(blackUrl)>-1){
+                    throw new IllegalRequestException("非法请求的地址");
+                }
+            }
+        }
+
         LoginContextUtil.clearLoginContext();
         //1.从头部获取token
         String token = request.getHeader(SecurityJwtConfig.getInstance().getTokenHeader());

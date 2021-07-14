@@ -19,5 +19,19 @@
     <sql id="Base_Column_List">
         tenant_id, tenant_code, tenant_name, create_date, create_user, status_cd, update_date, update_user, remark
     </sql>
+    <select id="list" resultType="com.currency.dto.sys.SysTenantDTO" parameterType="com.currency.dto.sys.QuerySysTenantDTO">
+        select t.* from sys_tenant t where t.status_cd='1'
+        <if test="query.tenantId != null and query.tenantId != ''">
+            and t.tenant_id=#{query.tenantId}
+        </if>
+        <if test="query.tenantCode != null and query.tenantCode != ''">
+            and t.tenant_code like concat('%',#{query.tenantCode},'%')
+        </if>
+        <if test="query.tenantName != null and query.tenantName != ''">
+            and t.tenant_name like concat('%',#{query.tenantName},'%')
+        </if>
 
+        order by t.create_date desc
+
+    </select>
 </mapper>

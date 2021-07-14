@@ -51,9 +51,9 @@ public class SysTenantController {
         }
     }
 
-    @PostMapping("/update")
+    @PostMapping("/edit")
     @ApiOperation("修改租户")
-    public ResultHandler update(@RequestBody @Valid SysTenantDTO tenantDTO) {
+    public ResultHandler edit(@RequestBody @Valid SysTenantDTO tenantDTO) {
         try {
 
             return ResultHandler.suc();

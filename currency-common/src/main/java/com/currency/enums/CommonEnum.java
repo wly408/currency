@@ -27,6 +27,18 @@ public enum CommonEnum {
         this.desc = desc;
     }
 
+    public static CommonEnum getCommonEnumByGroupAndVale(String group,String value){
+
+        CommonEnum[] list =  CommonEnum.values();
+        for (CommonEnum commonEnum : list) {
+            if(commonEnum.getGroup().equals(group)&&commonEnum.getValue().equals(value)){
+                return commonEnum;
+            }
+        }
+
+        return null;
+    }
+
     public String getValue() {
         return value;
     }
@@ -49,5 +61,13 @@ public enum CommonEnum {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
     }
 }

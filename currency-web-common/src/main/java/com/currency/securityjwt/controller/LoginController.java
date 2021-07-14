@@ -1,7 +1,7 @@
 package com.currency.securityjwt.controller;
 
 import com.currency.securityjwt.bean.LoginRequest;
-import com.currency.securityjwt.bean.SecurityJwtConfig;
+import com.currency.securityjwt.config.SecurityJwtConfig;
 import com.currency.securityjwt.service.AuthService;
 import com.currency.utils.CaptchaUtil;
 import com.currency.utils.ResultHandler;

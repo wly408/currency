@@ -1,6 +1,6 @@
 package com.currency.securityjwt.common.utils;
 
-import com.currency.securityjwt.bean.SecurityJwtConfig;
+import com.currency.securityjwt.config.SecurityJwtConfig;
 import com.currency.utils.DateUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -51,6 +51,7 @@ public class JwtTokenUtils {
 
     public static String getId(String token) {
         Claims claims = getClaims(token);
+
         return claims.getId();
     }
 

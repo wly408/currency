@@ -1,4 +1,4 @@
-package com.currency.securityjwt.bean;
+package com.currency.securityjwt.config;
 
 import com.currency.utils.SpringUtil;
 import lombok.Getter;
@@ -33,6 +33,7 @@ public class SecurityJwtConfig {
             "/auth/createCode",
 
     };
+    private  String[] blackList = {};
 
     public static SecurityJwtConfig getInstance() {
         SecurityJwtConfig securityJwtConfig =  SpringUtil.getBean(SecurityJwtConfig.class);

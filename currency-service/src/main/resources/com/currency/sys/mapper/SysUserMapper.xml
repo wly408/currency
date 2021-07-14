@@ -29,7 +29,7 @@
     <sql id="Base_Column_List">
         user_id, user_code, user_name, user_photo, realname, tenant_id, email, id_num, id_type, phone, password, salt, user_type, create_date, status_cd, create_user, update_user, update_date, remark
     </sql>
-    <select id="list"  resultType="com.currency.dto.sys.SysUserDTO">
+    <select id="list"  resultType="com.currency.dto.sys.SysUserDTO" parameterType="com.currency.dto.sys.QuerySysUserDTO">
         select * from sys_user t where t.status_cd='1' order by create_date desc
 
     </select>

@@ -1,6 +1,6 @@
 package com.currency.config;
 
-import com.currency.securityjwt.bean.SecurityJwtConfig;
+import com.currency.securityjwt.config.SecurityJwtConfig;
 import lombok.Getter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -20,7 +20,7 @@ public class ApiSecurityJwtConfig extends SecurityJwtConfig {
     private long expiration = 60 * 60L;
 
 
-    private final String[] whiteList = {
+    private  String[] whiteList = {
             "/swagger-ui.html",
             "/swagger-ui/*",
             "/swagger-resources/**",
@@ -36,6 +36,9 @@ public class ApiSecurityJwtConfig extends SecurityJwtConfig {
             "/sys/user/register",
             //验证码
             "/auth/createCode",
+
+    };
+    private  String[] blackList = {
 
     };
 

@@ -4,7 +4,6 @@ package com.currency.sys.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.currency.dto.sys.QuerySysUserDTO;
 import com.currency.dto.sys.SysUserDTO;
-import com.currency.enums.CommonEnum;
 import com.currency.sys.service.ISysUserService;
 import com.currency.utils.ResultHandler;
 import io.swagger.annotations.ApiOperation;
@@ -28,12 +27,10 @@ public class SysUserController {
     @Autowired
     private ISysUserService sysUserService;
 
-
     @PostMapping("/register")
     @ApiOperation("用户注册")
     public ResultHandler<String> register(@RequestBody @Valid SysUserDTO userDTO) {
         try {
-            userDTO.setUserType(CommonEnum.SYS_USER_TYPE_ADMIN.getValue());
             String userId = sysUserService.addUser(userDTO);
             return ResultHandler.suc(userId);
         } catch (Exception e) {
@@ -43,7 +40,7 @@ public class SysUserController {
 
     @GetMapping("/getUser")
     @ApiOperation("根据ID获取用户")
-    public ResultHandler<SysUserDTO> register(@RequestParam(value = "userId") String userId) {
+    public ResultHandler<SysUserDTO> getUser(@RequestParam(value = "userId") String userId) {
         try {
             SysUserDTO userDTO = sysUserService.getSysUserByUserId(userId);
             return ResultHandler.suc(userDTO);
@@ -53,7 +50,7 @@ public class SysUserController {
     }
 
     @GetMapping("/list")
-    @ApiOperation("根据ID获取用户")
+    @ApiOperation("查询用户列表")
     public ResultHandler<IPage> list(@RequestBody QuerySysUserDTO querySysUserDTO) {
         try {
             IPage<SysUserDTO> page = sysUserService.list(querySysUserDTO);
@@ -63,5 +60,23 @@ public class SysUserController {
         }
     }
 
+    @PostMapping("/edit")
+    @ApiOperation("用户编辑")
+    public ResultHandler edit(@RequestBody @Valid SysUserDTO userDTO) {
+        try {
+            return ResultHandler.suc();
+        } catch (Exception e) {
+            return ResultHandler.error(e);
+        }
+    }
+    @DeleteMapping("/del")
+    @ApiOperation("用户删除")
+    public ResultHandler del(@RequestParam(value = "userId") String userId) {
+        try {
+            return ResultHandler.suc();
+        } catch (Exception e) {
+            return ResultHandler.error(e);
+        }
+    }
 
 }

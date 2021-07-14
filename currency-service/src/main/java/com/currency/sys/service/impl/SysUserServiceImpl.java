@@ -9,11 +9,12 @@ import com.currency.constrants.CommonConstrants;
 import com.currency.dto.sys.QuerySysUserDTO;
 import com.currency.dto.sys.SysUserDTO;
 import com.currency.exception.BusinessException;
-
 import com.currency.sys.entity.SysUser;
 import com.currency.sys.mapper.SysUserMapper;
 import com.currency.sys.service.ISysUserService;
-import com.currency.utils.*;
+import com.currency.utils.LoginContextUtil;
+import com.currency.utils.ObjectUtil;
+import com.currency.utils.UUIDUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -97,9 +98,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     public IPage<SysUserDTO> list(QuerySysUserDTO querySysUserDTO) {
         //设置分页信息
         Page page = new Page(querySysUserDTO.getCurrent(), querySysUserDTO.getPagesize());
-        QueryWrapper<QuerySysUserDTO> queryWrapper = new QueryWrapper<>();
-        queryWrapper.setEntity(querySysUserDTO);
-        IPage pageInfo = this.baseMapper.list(page, queryWrapper);
+
+        IPage pageInfo = this.baseMapper.list(page, querySysUserDTO);
         return pageInfo;
     }
 

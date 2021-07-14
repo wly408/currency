@@ -1,6 +1,5 @@
 package com.currency.securityjwt.config;
 
-import com.currency.securityjwt.bean.SecurityJwtConfig;
 import com.currency.securityjwt.exception.JwtAccessDeniedHandler;
 import com.currency.securityjwt.exception.JwtAuthenticationEntryPoint;
 import com.currency.securityjwt.filter.JwtAuthorizationFilter;

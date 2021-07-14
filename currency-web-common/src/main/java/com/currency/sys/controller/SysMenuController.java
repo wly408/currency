@@ -1,16 +1,17 @@
 package com.currency.sys.controller;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.currency.dto.sys.QuerySysMenuDTO;
 import com.currency.dto.sys.SysMenuDTO;
 import com.currency.sys.service.ISysMenuService;
-import com.currency.utils.ResultHandler;
 import com.currency.utils.LoginContextUtil;
+import com.currency.utils.ResultHandler;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -39,6 +40,55 @@ public class SysMenuController {
             return ResultHandler.error(e);
         }
 
+    }
+    @GetMapping("/getMenu")
+    @ApiOperation("根据ID获取菜单")
+    public ResultHandler<SysMenuDTO> getMenu(@RequestParam(value = "menuId") String menuId) {
+        try {
+            return ResultHandler.suc();
+        } catch (Exception e) {
+            return ResultHandler.error(e);
+        }
+    }
+
+    @GetMapping("/list")
+    @ApiOperation("查询用户列表")
+    public ResultHandler<IPage> list(@RequestBody QuerySysMenuDTO querySysMenuDTO) {
+        try {
+            return ResultHandler.suc();
+        } catch (Exception e) {
+            return ResultHandler.error(e);
+        }
+    }
+
+    @PostMapping("/add")
+    @ApiOperation("新增角色")
+    public ResultHandler add(@RequestBody @Valid SysMenuDTO sysMenuDTO) {
+        try {
+            return ResultHandler.suc();
+        } catch (Exception e) {
+            return ResultHandler.error(e);
+        }
+    }
+
+    @PostMapping("/edit")
+    @ApiOperation("编辑角色")
+    public ResultHandler edit(@RequestBody @Valid SysMenuDTO sysMenuDTO) {
+        try {
+            return ResultHandler.suc();
+        } catch (Exception e) {
+            return ResultHandler.error(e);
+        }
+    }
+
+    @DeleteMapping("/del")
+    @ApiOperation("删除角色")
+    public ResultHandler del(@RequestParam(value = "roleId") String roleId) {
+        try {
+            return ResultHandler.suc();
+        } catch (Exception e) {
+            return ResultHandler.error(e);
+        }
     }
 
 }

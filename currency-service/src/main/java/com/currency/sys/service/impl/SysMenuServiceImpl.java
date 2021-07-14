@@ -14,6 +14,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     @Override
     public List<SysMenuDTO> getUserSysMenuByUserId(String userId) {
+
         return this.baseMapper.getUserSysMenuByUserId(userId);
     }
 }

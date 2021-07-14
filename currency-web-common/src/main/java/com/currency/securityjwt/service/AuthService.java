@@ -6,7 +6,7 @@ import com.currency.dto.sys.SysUserDTO;
 import com.currency.enums.CommonEnum;
 import com.currency.securityjwt.bean.JwtUser;
 import com.currency.securityjwt.bean.LoginRequest;
-import com.currency.securityjwt.bean.SecurityJwtConfig;
+import com.currency.securityjwt.config.SecurityJwtConfig;
 import com.currency.securityjwt.common.utils.JwtTokenUtils;
 import com.currency.sys.service.ISysTenantService;
 import com.currency.sys.service.ISysUserService;
