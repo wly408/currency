@@ -44,6 +44,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser,S
         if (StringUtils.isEmpty(tenantId)) {
             tenantId = LoginContextUtil.getTenantId();
         }
+        LoginContextUtil.dealAddAndEdit(tenantId);
         this.check(null, sysUserDTO.getUserCode(), sysUserDTO.getUserType(), tenantId);
         SysUser user = ObjectUtil.copy(sysUserDTO, SysUser.class);
         user.setPassword(bCryptPasswordEncoder.encode(sysUserDTO.getPassword()));
@@ -59,11 +60,10 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser,S
             throw new BusinessException("账号：" + userCode + "已经存在");
         }
         if (StringUtils.isNotEmpty(userId)) {
-            if (!sysUserDTO.getUserId().equals(userId) && sysUserDTO != null) {
+            if (sysUserDTO != null&&!sysUserDTO.getUserId().equals(userId)  ) {
                 throw new BusinessException("账号：" + userCode + "已经存在");
             }
         }
-
 
     }
 
@@ -91,6 +91,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser,S
 
     @Override
     public IPage<SysUserDTO> list(QuerySysUserDTO querySysUserDTO) {
+        LoginContextUtil.dealQuery(querySysUserDTO);
         //设置分页信息
         Page page = new Page(querySysUserDTO.getCurrent(), querySysUserDTO.getPagesize());
         IPage pageInfo = this.baseMapper.list(page, querySysUserDTO);

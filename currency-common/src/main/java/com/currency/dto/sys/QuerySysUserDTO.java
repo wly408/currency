@@ -6,4 +6,7 @@ import lombok.Data;
 @Data
 public class QuerySysUserDTO extends PageDTO {
     private String userName;
+    private String userCode;
+    private String realname;
+
 }

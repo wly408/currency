@@ -43,5 +43,22 @@
             and t.status_cd='1'
 
     </select>
+    <select id="list"  resultType="com.currency.dto.sys.SysMenuDTO" parameterType="com.currency.dto.sys.QuerySysMenuDTO">
+        select * from sys_user t where t.status_cd='1'
+        <if test="query.tenantId != null and query.tenantId != ''">
+            and t.tenant_id=#{query.tenantId}
+        </if>
+        <if test="query.menuName != null and query.menuName != ''">
+            and t.menu_name like concat('%',#{query.menuName},'%')
+        </if>
+        <if test="query.menuSn != null and query.menuSn != ''">
+            and t.menu_sn like concat('%',#{query.menuSn},'%')
+        </if>
+
+
+
+        order by create_date desc
+
+    </select>
 
 </mapper>

@@ -30,7 +30,22 @@
         user_id, user_code, user_name, user_photo, realname, tenant_id, email, id_num, id_type, phone, password, salt, user_type, create_date, status_cd, create_user, update_user, update_date, remark
     </sql>
     <select id="list"  resultType="com.currency.dto.sys.SysUserDTO" parameterType="com.currency.dto.sys.QuerySysUserDTO">
-        select * from sys_user t where t.status_cd='1' order by create_date desc
+        select * from sys_user t where t.status_cd='1'
+        <if test="query.tenantId != null and query.tenantId != ''">
+            and t.tenant_id=#{query.tenantId}
+        </if>
+        <if test="query.userName != null and query.userName != ''">
+            and t.user_name like concat('%',#{query.userName},'%')
+        </if>
+        <if test="query.userCode != null and query.userCode != ''">
+            and t.user_code like concat('%',#{query.userCode},'%')
+        </if>
+        <if test="query.realname != null and query.realname != ''">
+            and t.realname like concat('%',#{query.realname},'%')
+        </if>
+
+
+        order by create_date desc
 
     </select>
 

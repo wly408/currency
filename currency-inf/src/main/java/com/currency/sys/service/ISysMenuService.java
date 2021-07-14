@@ -32,4 +32,6 @@ public interface ISysMenuService  {
     void edit(SysMenuDTO sysMenuDTO);
 
     void delByMenuId(String menuId);
+
+    SysMenuDTO getSysMenuByMenuSnAndTenantId(String menuSn,String tenantId);
 }
