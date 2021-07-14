@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.currency.common.mybatis.BaseServiceImpl;
 import com.currency.constrants.CommonConstrants;
 import com.currency.dto.sys.QuerySysUserDTO;
 import com.currency.dto.sys.SysUserDTO;
@@ -34,7 +34,7 @@ import java.util.List;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
+public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser,SysUserDTO> implements ISysUserService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -86,21 +86,20 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Override
     public SysUserDTO getSysUserByUserId(String userId) {
-        SysUser sysUser = this.getById(userId);
-        if (CommonConstrants.COMMON_YES.equals(sysUser.getStatusCd())) {
-            return ObjectUtil.copy(sysUser, SysUserDTO.class);
-        }
-
-        return null;
+        return this.getDtoById(userId,SysUserDTO.class);
     }
 
     @Override
     public IPage<SysUserDTO> list(QuerySysUserDTO querySysUserDTO) {
         //设置分页信息
         Page page = new Page(querySysUserDTO.getCurrent(), querySysUserDTO.getPagesize());
-
         IPage pageInfo = this.baseMapper.list(page, querySysUserDTO);
         return pageInfo;
+    }
+
+    @Override
+    public void delUserByUserId(String userId) {
+        this.delHadById(userId);
     }
 
 }

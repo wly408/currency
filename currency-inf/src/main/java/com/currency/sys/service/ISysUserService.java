@@ -22,5 +22,6 @@ public interface ISysUserService  {
 
     IPage<SysUserDTO> list(QuerySysUserDTO querySysUserDTO);
 
+    void delUserByUserId(String userId);
 
 }

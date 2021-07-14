@@ -6,4 +6,5 @@ import lombok.Data;
 @Data
 public class QuerySysMenuDTO extends PageDTO {
     private String menuName;
+    private String menuCode;
 }

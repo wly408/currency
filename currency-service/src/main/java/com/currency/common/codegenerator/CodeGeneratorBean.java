@@ -106,6 +106,7 @@ public class CodeGeneratorBean {
             this.setColumnNaming(NamingStrategy.underline_to_camel);
         this.setSuperEntityClass("com.currency.common.entity.BaseEntity");
 //        strategy.setSuperEntityClass("Serializable");
+            this.setSuperServiceClass("com.currency.common.mybatis.BaseServiceImpl");
 
 
             this.setEntityLombokModel(true);

@@ -2,8 +2,7 @@ package com.currency.sys.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.currency.constrants.CommonConstrants;
+import com.currency.common.mybatis.BaseServiceImpl;
 import com.currency.dto.sys.QuerySysTenantDTO;
 import com.currency.dto.sys.SysTenantDTO;
 import com.currency.sys.entity.SysTenant;
@@ -25,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class SysTenantServiceImpl extends ServiceImpl<SysTenantMapper, SysTenant> implements ISysTenantService {
+public class SysTenantServiceImpl extends BaseServiceImpl<SysTenantMapper, SysTenant, SysTenantDTO> implements ISysTenantService {
     @Override
     public String addTenant(SysTenantDTO sysTenantDTO) {
         SysTenant sysTenant = ObjectUtil.copy(sysTenantDTO, SysTenant.class);
@@ -36,7 +35,7 @@ public class SysTenantServiceImpl extends ServiceImpl<SysTenantMapper, SysTenant
 
     @Override
     public IPage<SysTenantDTO> list(QuerySysTenantDTO querySysTenantDTO) {
-        LoginContextUtil.setQueryTenantId(querySysTenantDTO);
+        LoginContextUtil.dealQuery(querySysTenantDTO);
         Page page = new Page(querySysTenantDTO.getCurrent(), querySysTenantDTO.getPagesize());
         IPage<SysTenantDTO> pageInfo = this.baseMapper.list(page, querySysTenantDTO);
 
@@ -45,21 +44,12 @@ public class SysTenantServiceImpl extends ServiceImpl<SysTenantMapper, SysTenant
 
     @Override
     public void delTenantByTenantId(String tenantId) {
-        SysTenant sysTenant = this.getById(tenantId);
-        LoginContextUtil.hasDelAuthority(sysTenant);
-        if (sysTenant != null) {
-            this.save(sysTenant);
-        }
+        this.delHadById(tenantId);
 
     }
 
     @Override
     public SysTenantDTO getTenantByTenantId(String tenantId) {
-        SysTenant sysTenant = this.getById(tenantId);
-        if (sysTenant != null && CommonConstrants.COMMON_YES.equals(sysTenant.getStatusCd())) {
-            return ObjectUtil.copy(sysTenant, SysTenantDTO.class);
-        }
-
-        return null;
+        return this.getDtoById(tenantId, SysTenantDTO.class);
     }
 }

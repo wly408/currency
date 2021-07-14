@@ -4,6 +4,7 @@ package com.currency.sys.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.currency.dto.sys.QuerySysMenuDTO;
 import com.currency.dto.sys.SysMenuDTO;
+import com.currency.dto.sys.SysUserDTO;
 import com.currency.sys.service.ISysMenuService;
 import com.currency.utils.LoginContextUtil;
 import com.currency.utils.ResultHandler;
@@ -45,27 +46,30 @@ public class SysMenuController {
     @ApiOperation("根据ID获取菜单")
     public ResultHandler<SysMenuDTO> getMenu(@RequestParam(value = "menuId") String menuId) {
         try {
-            return ResultHandler.suc();
+            SysMenuDTO sysMenuDTO = sysMenuService.getSysMenuByMenuId(menuId);
+            return ResultHandler.suc(sysMenuDTO);
         } catch (Exception e) {
             return ResultHandler.error(e);
         }
     }
 
     @GetMapping("/list")
-    @ApiOperation("查询用户列表")
+    @ApiOperation("查询菜单列表")
     public ResultHandler<IPage> list(@RequestBody QuerySysMenuDTO querySysMenuDTO) {
         try {
-            return ResultHandler.suc();
+            IPage<SysUserDTO> page = sysMenuService.list(querySysMenuDTO);
+            return ResultHandler.suc(page);
         } catch (Exception e) {
             return ResultHandler.error(e);
         }
     }
 
     @PostMapping("/add")
-    @ApiOperation("新增角色")
+    @ApiOperation("新增菜单")
     public ResultHandler add(@RequestBody @Valid SysMenuDTO sysMenuDTO) {
         try {
-            return ResultHandler.suc();
+            String menuId = sysMenuService.addMenu(sysMenuDTO);
+            return ResultHandler.suc(menuId);
         } catch (Exception e) {
             return ResultHandler.error(e);
         }
@@ -75,6 +79,7 @@ public class SysMenuController {
     @ApiOperation("编辑角色")
     public ResultHandler edit(@RequestBody @Valid SysMenuDTO sysMenuDTO) {
         try {
+            sysMenuService.edit(sysMenuDTO);
             return ResultHandler.suc();
         } catch (Exception e) {
             return ResultHandler.error(e);
@@ -82,9 +87,10 @@ public class SysMenuController {
     }
 
     @DeleteMapping("/del")
-    @ApiOperation("删除角色")
-    public ResultHandler del(@RequestParam(value = "roleId") String roleId) {
+    @ApiOperation("删除菜单")
+    public ResultHandler del(@RequestParam(value = "menuId") String menuId) {
         try {
+            sysMenuService.delByMenuId(menuId);
             return ResultHandler.suc();
         } catch (Exception e) {
             return ResultHandler.error(e);

@@ -87,7 +87,7 @@ public final class LoginContextUtil {
         return isRole(CommonEnum.SYS_ROLE_SUPER_ADMIN.getValue());
     }
 
-    public final static void setQueryTenantId(Object object) {
+    public final static void dealQuery(Object object) {
         if (object != null) {
             String tenantId = null;
             if (!LoginContextUtil.isSuperAdmin()) {
@@ -96,8 +96,18 @@ public final class LoginContextUtil {
             ObjectUtil.invokeSimple(object, "setTenantId", String.class, tenantId);
         }
     }
+    public final static void dealAddAndEdit(String tenantId) {
+        if(LoginContextUtil.isSuperAdmin()){
+            return;
+        }
+        String tenantIdTemp = LoginContextUtil.getTenantId();
+        if(!tenantIdTemp.equals(tenantId)){
+            throw new BusinessException("您无权限执行该操作");
 
-    public final static void hasDelAuthority(Object delVale) {
+        }
+    }
+
+    public final static void dealDel(Object delVale) {
         if (delVale != null) {
             boolean isDel = false;
             if (LoginContextUtil.isSuperAdmin()) {
