@@ -1,6 +1,7 @@
 package com.currency.securityjwt.controller;
 
 import com.currency.securityjwt.bean.LoginRequest;
+import com.currency.securityjwt.bean.LoginResponse;
 import com.currency.securityjwt.config.SecurityJwtConfig;
 import com.currency.securityjwt.service.AuthService;
 import com.currency.utils.CaptchaUtil;
@@ -38,9 +39,16 @@ public class LoginController {
 
     @PostMapping("/login")
     @ApiOperation("登录")
-    public ResultHandler<String> login(@RequestBody LoginRequest loginRequest) {
-        String token = authService.createToken(loginRequest);
-        return ResultHandler.suc(token);
+    public ResultHandler<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+        try{
+            String token = authService.createToken(loginRequest);
+            LoginResponse response = new LoginResponse();
+            response.setToken(token);
+            return ResultHandler.suc(response);
+        }catch (Exception e){
+            return ResultHandler.error(e);
+        }
+
     }
 
     @PostMapping("/logout")

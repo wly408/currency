@@ -14,6 +14,7 @@ import com.currency.utils.LoginContextUtil;
 import com.currency.utils.SpringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
@@ -41,10 +42,13 @@ public class AuthService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Value("${sys.verifyCode}")
+    private boolean isVerifyCode;
+
     public String createToken(LoginRequest loginRequest) {
         String verifyCodeUid = loginRequest.getVerifyCodeUid();
         String verifyCode = loginRequest.getVerifyCode();
-        if (StringUtils.isEmpty(verifyCodeUid) || StringUtils.isEmpty(verifyCode)) {
+        if (isVerifyCode&&(StringUtils.isEmpty(verifyCodeUid) || StringUtils.isEmpty(verifyCode))) {
             throw new BadCredentialsException("验证码为空");
         }
         String tenantId = SpringUtil.getProperty(CommonConstrants.SPRING_CONFIG_KEY_SYS_TENANT_ID);
@@ -60,11 +64,14 @@ public class AuthService {
         }
         loginRequest.setTenantId(tenantId);
         //校验验证码
-        String realVerifyCode = stringRedisTemplate.opsForValue().get(verifyCodeUid);
-        if (!verifyCode.equalsIgnoreCase(realVerifyCode)) {
-            throw new BadCredentialsException("验证码错误");
+        if(isVerifyCode){
+            String realVerifyCode = stringRedisTemplate.opsForValue().get(verifyCodeUid);
+            if (!verifyCode.equalsIgnoreCase(realVerifyCode)) {
+                throw new BadCredentialsException("验证码错误");
+            }
+            stringRedisTemplate.delete(verifyCodeUid);
         }
-        stringRedisTemplate.delete(verifyCodeUid);
+
         SysUserDTO user = sysUserService.getSysUserByUserCodeAndUserType(loginRequest.getUsername(), CommonEnum.SYS_USER_TYPE_ADMIN.getValue(), loginRequest.getTenantId());
         if (user == null) {
             throw new BadCredentialsException("账号或者密码错误");
