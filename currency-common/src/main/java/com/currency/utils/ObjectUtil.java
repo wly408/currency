@@ -1,10 +1,13 @@
 package com.currency.utils;
 
+import com.alibaba.fastjson.JSON;
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Method;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -42,7 +45,6 @@ public class ObjectUtil {
         } catch (Exception e) {
 
 
-
         }
         return null;
 
@@ -60,8 +62,9 @@ public class ObjectUtil {
         BeanUtils.copyProperties(source, target);
 
     }
+
     public static <T> T copy(Object source, Class<T> target) {
-        if(source==null){
+        if (source == null) {
             return null;
         }
         try {
@@ -76,11 +79,42 @@ public class ObjectUtil {
     public static <T, K> List<K> copyList(List<T> source, Class<K> target) {
 
         if (null == source || source.isEmpty()) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
         return source.stream().map(e -> copy(e, target)).collect(Collectors.toList());
     }
 
+    public static <T> List<T> mapToList(List<Map<String, Object>> mapList, Class<T> target) {
+        List<T> list = null;
+        if (!CollectionUtils.isEmpty(mapList)) {
+            list = new ArrayList<>();
+            for (Map<String, Object> result : mapList) {
+                if (result != null) {
+                    list.add(mapToBean(result, target));
+                }
+            }
+        }
+        return list;
+
+    }
+
+    public static <T> T mapToBean(Map<String, Object> map, Class<T> target) {
+        if (map != null) {
+            String resultJson = JSON.toJSONString(map);
+            T t = JSON.parseObject(resultJson, target);
+            return t;
+        }
+        return null;
+
+    }
+
+    public static <T> T mapToBean(List<Map<String, Object>> mapList, Class<T> target) {
+        if (!CollectionUtils.isEmpty(mapList)) {
+            return mapToBean(mapList.get(0), target);
+        }
+        return null;
+
+    }
 
 
 }

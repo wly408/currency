@@ -41,4 +41,7 @@ public interface ISysRoleService  {
      * @return
      */
     IPage<SysRoleDTO> list(QuerySysRoleDTO querySysRoleDTO);
+
+    void testCommit();
+
 }

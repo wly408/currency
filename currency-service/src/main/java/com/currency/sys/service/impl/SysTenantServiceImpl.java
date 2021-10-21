@@ -36,7 +36,7 @@ public class SysTenantServiceImpl extends BaseServiceImpl<SysTenantMapper, SysTe
     @Override
     public IPage<SysTenantDTO> list(QuerySysTenantDTO querySysTenantDTO) {
         LoginContextUtil.dealQuery(querySysTenantDTO);
-        Page page = new Page(querySysTenantDTO.getCurrent(), querySysTenantDTO.getPagesize());
+        Page page = new Page(querySysTenantDTO.getCurrent(), querySysTenantDTO.getPageSize());
         IPage<SysTenantDTO> pageInfo = this.baseMapper.list(page, querySysTenantDTO);
 
         return pageInfo;

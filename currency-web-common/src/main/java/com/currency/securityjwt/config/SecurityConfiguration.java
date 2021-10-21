@@ -42,6 +42,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        String[] whiteList =  SecurityJwtConfig.getInstance().getWhiteList();
         http.cors(withDefaults())
                 // 禁用 CSRF
                 .csrf().disable()

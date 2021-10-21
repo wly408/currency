@@ -35,6 +35,8 @@ public class MgtSecurityJwtConfig extends SecurityJwtConfig {
 
             //验证码
             "/auth/createCode",
+            "/auth/createCode",
+            "/test/**"
 
     };
     private  String[] blackList = {

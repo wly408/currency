@@ -2,9 +2,12 @@ package com.currency.securityjwt.controller;
 
 import com.currency.securityjwt.bean.LoginRequest;
 import com.currency.securityjwt.bean.LoginResponse;
+import com.currency.securityjwt.common.utils.JwtTokenUtils;
 import com.currency.securityjwt.config.SecurityJwtConfig;
 import com.currency.securityjwt.service.AuthService;
+import com.currency.sys.service.ISysMenuService;
 import com.currency.utils.CaptchaUtil;
+import com.currency.utils.LoginContextUtil;
 import com.currency.utils.ResultHandler;
 import com.currency.utils.UUIDUtils;
 import io.swagger.annotations.Api;
@@ -37,6 +40,9 @@ public class LoginController {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    @Autowired
+    private ISysMenuService sysMenuService;
+
     @PostMapping("/login")
     @ApiOperation("登录")
     public ResultHandler<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
@@ -44,6 +50,9 @@ public class LoginController {
             String token = authService.createToken(loginRequest);
             LoginResponse response = new LoginResponse();
             response.setToken(token);
+            String tokenValue = token.replace(SecurityJwtConfig.getInstance().getTokenPrefix(), "");
+
+            response.setMenuList(sysMenuService.getUserSysMenuByUserId(JwtTokenUtils.getId(tokenValue)));
             return ResultHandler.suc(response);
         }catch (Exception e){
             return ResultHandler.error(e);

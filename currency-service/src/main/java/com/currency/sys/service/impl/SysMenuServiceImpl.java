@@ -18,11 +18,14 @@ import com.currency.utils.ObjectUtil;
 import com.currency.utils.UUIDUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
 @Service
+@Transactional(rollbackFor = Exception.class)
+
 public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuMapper, SysMenu, SysMenuDTO> implements ISysMenuService {
 
     @Override
@@ -38,7 +41,7 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuMapper, SysMenu, 
     @Override
     public IPage<SysUserDTO> list(QuerySysMenuDTO querySysMenuDTO) {
         LoginContextUtil.dealQuery(querySysMenuDTO);
-        Page page = new Page(querySysMenuDTO.getCurrent(), querySysMenuDTO.getPagesize());
+        Page page = new Page(querySysMenuDTO.getCurrent(), querySysMenuDTO.getPageSize());
         IPage<SysUserDTO> pageInfo = this.baseMapper.list(page, querySysMenuDTO);
         return pageInfo;
     }

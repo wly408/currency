@@ -44,6 +44,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                                     FilterChain chain) throws IOException, ServletException {
 
         String url = request.getRequestURI();
+        String[] whiteList = SecurityJwtConfig.getInstance().getWhiteList();
         String[] blackList = SecurityJwtConfig.getInstance().getBlackList();
         if(blackList!=null&&blackList.length>0){
             for (String blackUrl : blackList) {

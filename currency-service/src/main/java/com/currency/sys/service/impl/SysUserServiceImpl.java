@@ -93,7 +93,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser,S
     public IPage<SysUserDTO> list(QuerySysUserDTO querySysUserDTO) {
         LoginContextUtil.dealQuery(querySysUserDTO);
         //设置分页信息
-        Page page = new Page(querySysUserDTO.getCurrent(), querySysUserDTO.getPagesize());
+        Page page = new Page(querySysUserDTO.getCurrent(), querySysUserDTO.getPageSize());
         IPage pageInfo = this.baseMapper.list(page, querySysUserDTO);
         return pageInfo;
     }
