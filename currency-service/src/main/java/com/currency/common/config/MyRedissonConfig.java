@@ -22,8 +22,8 @@ public class MyRedissonConfig {
         this.redisProperties = redisProperties;
     }
 
-    @Bean(destroyMethod="shutdown")
-    RedissonClient redisson() throws IOException {
+    @Bean
+    RedissonClient redisson()  {
         String url =REDISSON_PREFIX+redisProperties.getHost()+":"+redisProperties.getPort();
         Config config = new Config();
         config.useSingleServer()

@@ -36,6 +36,7 @@ public class ApiSecurityJwtConfig extends SecurityJwtConfig {
             "/sys/user/register",
             //验证码
             "/auth/createCode",
+            "/helloWorld",
 
     };
     private  String[] blackList = {
