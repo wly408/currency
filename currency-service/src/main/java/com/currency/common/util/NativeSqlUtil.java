@@ -3,8 +3,10 @@ package com.currency.common.util;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.BeanUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.currency.dto.PageDTO;
 import com.currency.sys.mapper.CommonSqlMapper;
 import com.currency.utils.SpringUtil;
+import com.currency.utils.UUIDUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
@@ -12,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 
 public final class NativeSqlUtil {
+
+    private static ThreadLocal<Map<String, Map<String, Object>>> paramThreadLocal = new ThreadLocal<Map<String, Map<String, Object>>>();
+
     /**
      * 执行删除SQL
      *
@@ -74,16 +79,33 @@ public final class NativeSqlUtil {
     }
 
     private static Map<String, Object> tranParam(String sql, Object params) {
-        Map<String, Object> param = new HashMap<>();
-        param.put("sql", sql);
-        if (params != null) {
-            if (params instanceof Map) {
-                param.putAll((Map) params);
-            } else {
+        Map<String, Object> param = null;
+        if (params != null && params instanceof Map) {
+            param = (Map<String, Object>) params;
+        } else {
+            param = new HashMap<>();
+            if (params != null) {
                 param.putAll(BeanUtils.beanToMap(params));
-
             }
         }
+        param.put("sql", sql);
+        return param;
+    }
+
+    private static Map<String, Object> tranParam(String sqlId, String sql, Object params) {
+        Map<String, Map<String, Object>> value = paramThreadLocal.get();
+        if (value != null) {
+            Map<String, Object> param = value.get(sqlId);
+            if (param != null) {
+                return param;
+            }
+        } else {
+            value = new HashMap<>();
+        }
+
+        Map<String, Object> param = tranParam(sql, params);
+        value.put(sqlId, param);
+        paramThreadLocal.set(value);
         return param;
     }
 
@@ -104,6 +126,17 @@ public final class NativeSqlUtil {
         page.setSize(pageSize);
         page.setTotal(queryCount(sql, params));
         page.setRecords(queryList(sql, params, current, pageSize, taget));
+        return page;
+    }
+
+    public static <T> IPage<T> queryPage(String sql, PageDTO params, Class<T> taget) {
+        IPage<T> page = new Page<>();
+        //当前查询的参数ID
+        String sqlId = UUIDUtils.getUUID();
+        page.setCurrent(params.getCurrent());
+        page.setSize(params.getPageSize());
+        page.setTotal(queryCount(sql, tranParam(sqlId, sql, params)));
+        page.setRecords(queryList(sql, tranParam(sqlId, sql, params), params.getCurrent(), params.getPageSize(), taget));
         return page;
     }
 }

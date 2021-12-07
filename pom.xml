@@ -174,7 +174,7 @@
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.12</version>
+                <version>1.13</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
@@ -185,6 +185,16 @@
                 <groupId>cglib</groupId>
                 <artifactId>cglib</artifactId>
                 <version>3.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>3.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>3.13.6</version>
             </dependency>
 
 

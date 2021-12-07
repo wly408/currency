@@ -1,4 +1,6 @@
 package com.life.wd.bean;
 
-public class BaseBean {
+import java.io.Serializable;
+
+public class BaseBean implements Serializable {
 }

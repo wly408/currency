@@ -3,6 +3,7 @@ package com.currency.common.mybatis;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.currency.common.bean.ExecuteCode;
+import com.currency.common.entity.BaseEntity;
 import com.currency.constrants.CommonConstrants;
 import com.currency.utils.LoginContextUtil;
 import com.currency.utils.ObjectUtil;
@@ -11,13 +12,13 @@ import org.springframework.util.CollectionUtils;
 import java.io.Serializable;
 import java.util.Collection;
 
-public class BaseServiceImpl<M extends BaseMapper<T>, T, D> extends ServiceImpl<M, T> {
+public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseEntity, D> extends ServiceImpl<M, T> {
 
     @Override
     public T getById(Serializable id) {
         T t = baseMapper.selectById(id);
         if (t != null) {
-            String statusCd = (String) ObjectUtil.invokeSimple(t, "getStatusCd", null, null);
+            String statusCd = t.getStatusCd();
             if (!CommonConstrants.COMMON_YES.equals(statusCd)) {
                 return null;
             }
