@@ -112,7 +112,7 @@ public class CodeGeneratorBean {
             this.setEntityLombokModel(true);
             this.setRestControllerStyle(true);
 //        strategy.setSuperControllerClass("com.baomidou.ant.common.BaseController");
-            this.setSuperControllerClass(null);
+//            this.setSuperControllerClass(null);
 
             //this.setInclude("ly_test");
             //this.setSuperEntityColumns("id");
@@ -124,7 +124,7 @@ public class CodeGeneratorBean {
 //            this.setSuperEntityClass("com.ly.myspringboot.common.entity.BaseEntity");
             //表字段大写
             this.setCapitalMode(true);
-            this.setSuperServiceClass(null);
+//            this.setSuperServiceClass(null);
             this.setSuperEntityColumns("create_date","create_user","tenant_id","update_date","update_user","remark","status_cd");
 
 
