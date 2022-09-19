@@ -23,6 +23,7 @@
         <module>currency-mgt-web</module>
         <module>currency-api-web</module>
         <module>currency-web-common</module>
+        <module>currency-study</module>
     </modules>
 
     <!--定义属性值-->
