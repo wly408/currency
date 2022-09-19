@@ -1,6 +1,4 @@
 org.springframework.boot.SpringApplicationRunListener=\
-com.currency.source.listener.MySpringApplicationRunListener
+com.currency.ly.source.springboot.listener.MySpringApplicationRunListener
 org.springframework.context.ApplicationContextInitializer=\
-com.currency.source.initializer.MyApplicationContextInitializer
-org.springframework.boot.env.EnvironmentPostProcessor=\
-com.spring.environmentpostprocessor.MyJsonEnvironmentPostProcessor
+com.currency.ly.source.springboot.initializer.MyApplicationContextInitializer

@@ -1,4 +1,4 @@
-package com.currency.ly.source.springboot.design.bridge;
+package com.currency.ly.j2se.design.bridge;
 
 /**
  *

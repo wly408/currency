@@ -1,4 +1,4 @@
-package com.currency.ly.source.springboot.design.adaptor;
+package com.currency.ly.j2se.design.adaptor;
 
 /**
  * 1.awt中的适配器

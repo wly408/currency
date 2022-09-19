@@ -1,4 +1,4 @@
-package com.currency.ly.source.springboot.design.decorate;
+package com.currency.ly.j2se.design.decorate;
 
 /**
  * 饮料抽象基类:
