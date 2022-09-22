@@ -1,4 +1,4 @@
-org.springframework.boot.SpringApplicationRunListener=\
-com.currency.ly.source.springboot.listener.MySpringApplicationRunListener
+#org.springframework.boot.SpringApplicationRunListener=\
+#com.currency.ly.source.springboot.listener.MySpringApplicationRunListener
 org.springframework.context.ApplicationContextInitializer=\
 com.currency.ly.source.springboot.initializer.MyApplicationContextInitializer
