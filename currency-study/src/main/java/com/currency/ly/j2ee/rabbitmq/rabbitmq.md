@@ -16,9 +16,9 @@ Exchange：交换机
 三种交换机：
 1. Fanout
         Exchange(不处理路由键)：一个发送到交换机上的消息都会被转发到与该交换机绑定的所有队列上。Fanout交换机发消息是最快的。
-2. Direct
+2. Direct-1对1
         Exchange(处理路由键)：如果一个队列绑定到该交换机上，并且当前要求路由键为X，只有路由键是X的消息才会被这个队列转发。
-3. Topic
+3. Topic-1对多
         Exchange(将路由键和某模式进行匹配，可以理解成模糊处理)：路由键的词由“.”隔开，符号“#”表示匹配0个或多个词，符号“*”表示匹配不多不少一个词。因此“audit.#”能够匹配到“audit.irs.corporate”，但是“audit.*”只会匹配到“audit.irs”
 Message Queue：消息队列。
 用于存储还未被消费者消费的消息。
@@ -37,3 +37,25 @@ Channel：信道。
 Command：AMQP 的命令。
 客户端通过Command完成与AMQP服务器的交互来实现自身的逻辑。例如在RabbitMQ中，客户端可以通过publish命令发送消息，txSelect开启一个事务，txCommit提交一个事务。
 ls/125847067
+
+三、配置
+并发参数：
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    listener:
+      simple:
+#        acknowledge-mode: manual  # 手动确定（默认自动确认）
+        concurrency: 1 # 消费端的监听个数(即@RabbitListener开启几个线程去处理数据。)
+        max-concurrency: 10 # 消费端的监听最大个数
+        prefetch: 10
+    connection-timeout: 15000   # 超时时间
+    
+    
+    prefetch每个customer会在MQ预取一些消息放入内存的LinkedBlockingQueue中进行消费，这个值越高，消息传递的越快，但非顺序处理消息的风险更高。如果ack模式为none，则忽略。如有必要，将增加此值以匹配txSize或messagePerAck。从2.0开始默认为250
+    
+    
+    若一个消费者配置prefetch=10，concurrency=2，即会开启2个线程去消费消息，每个线程都会抓取10个线程到内存中（注意不是两个线程去共享内存中抓取的消息）。

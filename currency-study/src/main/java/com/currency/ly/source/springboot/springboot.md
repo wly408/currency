@@ -63,3 +63,15 @@
 
 7.SpringApplicationRunListeners
 11.ApplicationContextAware
+
+12.注解
+@SpringBootApplication包括：
+
+@SpringBootConfiguration @ SpringBootConfiguration只是Spring标准@Configuration批注的替代方法。 两者之间的唯一区别是@SpringBootConfiguration允许自动找到配置
+@EnableAutoConfiguration 在 EnableAutoConfiguration 类中包含有 @AutoConfigurationPackage 与 @Import(AutoConfigurationImportSelector.class) 注解
+    在 AutoConfigurationPackage 类中有包含了@Import(AutoConfigurationPackages.Registrar.class)；
+    继续进入 Registrar 类Registrar 是 AutoConfigurationPackages 中的静态内部类 ；
+    
+    AutoConfigurationImportSelector 
+
+@ComponentScan

@@ -214,3 +214,5 @@ http://www.muzhuangnet.com/show/71369.html
 
 查看：
 info replication
+
+九、Redis为什么是线程安全的
