@@ -12,4 +12,11 @@ Registry	服务注册与发现的注册中心
 Monitor	    统计服务的调用次数和调用时间的监控中心
 Container	服务运行容器
 
+二、何为RPC
 
+三、数据的传递
+  public class RemoteTraceIdFilter implements Filter
+  
+  
+  RpcContext.getContext().setAttachment(AbstractMyThreadContext.TRACE_ID,
+                    AbstractMyThreadContext.getTraceId());
