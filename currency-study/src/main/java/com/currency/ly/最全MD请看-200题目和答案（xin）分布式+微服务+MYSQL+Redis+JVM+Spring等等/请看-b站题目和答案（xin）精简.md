@@ -665,28 +665,6 @@ TransactionInterceptor
 ​		constructor – 在构造函数参数的byType方式。
 ​		autodetect – 如果找到默认的构造函数，使用“自动装配用构造”; 否则，使用“按类型自动装配”。
 
-# spring、springmvc、springboot的区别是什么？
-
-​	spring和springMvc：
-
-1. spring是一个一站式的轻量级的java开发框架，核心是控制反转（IOC）和面向切面（AOP），针对于开发的WEB层(springMvc)、业务层(Ioc)、持久层(jdbcTemplate)等都提供了多种配置解决方案；
-
-2. springMvc是spring基础之上的一个MVC框架，主要处理web开发的路径映射和视图渲染，属于spring框架中WEB层开发的一部分；
-
-  springMvc和springBoot：
-
-  1、springMvc属于一个企业WEB开发的MVC框架，涵盖面包括前端视图开发、文件配置、后台接口逻辑开发等，XML、config等配置相对比较繁琐复杂；
-
-  2、springBoot框架相对于springMvc框架来说，更专注于开发微服务后台接口，不开发前端视图，同时遵循默认优于配置，简化了插件配置流程，不需要配置xml，相对springmvc，大大简化了配置流程；
-
-  总结：
-
-  1、Spring 框架就像一个家族，有众多衍生产品例如 boot、security、jpa等等。但他们的基础都是Spring的ioc、aop等. ioc 提供了依赖注入的容器， aop解决了面向横切面编程，然后在此两者的基础上实现了其他延伸产品的高级功能；
-
-  2、springMvc主要解决WEB开发的问题，是基于Servlet 的一个MVC框架，通过XML配置，统一开发前端视图和后端逻辑；
-
-  3、由于Spring的配置非常复杂，各种XML、JavaConfig、servlet处理起来比较繁琐，为了简化开发者的使用，从而创造性地推出了springBoot框架，默认优于配置，简化了springMvc的配置流程；但区别于springMvc的是，springBoot专注于单体微服务接口开发，和前端解耦，虽然springBoot也可以做成springMvc前后台一起开发，但是这就有点不符合springBoot框架的初衷了；
-
 # springmvc工作流程是什么？
 
 ​		当发起请求时被前置的控制器拦截到请求，根据请求参数生成代理请求，找到请求对应的实际控制器，控制器处理请求，创建数据模型，访问数据库，将模型响应给中心控制器，控制器使用模型与视图渲染视图结果，将结果返回给中心控制器，再将结果返回给请求者。
@@ -738,277 +716,7 @@ TransactionInterceptor
 
 在之前的课程中我们讲解了springboot的启动过程，其实在面试过程中问的最多的可能是自动装配的原理，而自动装配是在启动过程中完成，只不过在刚开始的时候我们选择性的跳过了，下面详细讲解自动装配的过程。
 
-1、在springboot的启动过程中，有一个步骤是创建上下文，如果不记得可以看下面的代码：
-
-```java
-public ConfigurableApplicationContext run(String... args) {
-		StopWatch stopWatch = new StopWatch();
-		stopWatch.start();
-		ConfigurableApplicationContext context = null;
-		Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
-		configureHeadlessProperty();
-		SpringApplicationRunListeners listeners = getRunListeners(args);
-		listeners.starting();
-		try {
-			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
-			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
-			configureIgnoreBeanInfo(environment);
-			Banner printedBanner = printBanner(environment);
-			context = createApplicationContext();
-			exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,
-					new Class[] { ConfigurableApplicationContext.class }, context);
-            //此处完成自动装配的过程
-			prepareContext(context, environment, listeners, applicationArguments, printedBanner);
-			refreshContext(context);
-			afterRefresh(context, applicationArguments);
-			stopWatch.stop();
-			if (this.logStartupInfo) {
-				new StartupInfoLogger(this.mainApplicationClass).logStarted(getApplicationLog(), stopWatch);
-			}
-			listeners.started(context);
-			callRunners(context, applicationArguments);
-		}
-		catch (Throwable ex) {
-			handleRunFailure(context, ex, exceptionReporters, listeners);
-			throw new IllegalStateException(ex);
-		}
-
-		try {
-			listeners.running(context);
-		}
-		catch (Throwable ex) {
-			handleRunFailure(context, ex, exceptionReporters, null);
-			throw new IllegalStateException(ex);
-		}
-		return context;
-	}
-```
-
-2、在prepareContext方法中查找load方法，一层一层向内点击，找到最终的load方法
-
-```java
-//prepareContext方法
-	private void prepareContext(ConfigurableApplicationContext context, ConfigurableEnvironment environment,
-			SpringApplicationRunListeners listeners, ApplicationArguments applicationArguments, Banner printedBanner) {
-		context.setEnvironment(environment);
-		postProcessApplicationContext(context);
-		applyInitializers(context);
-		listeners.contextPrepared(context);
-		if (this.logStartupInfo) {
-			logStartupInfo(context.getParent() == null);
-			logStartupProfileInfo(context);
-		}
-		// Add boot specific singleton beans
-		ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
-		beanFactory.registerSingleton("springApplicationArguments", applicationArguments);
-		if (printedBanner != null) {
-			beanFactory.registerSingleton("springBootBanner", printedBanner);
-		}
-		if (beanFactory instanceof DefaultListableBeanFactory) {
-			((DefaultListableBeanFactory) beanFactory)
-					.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
-		}
-		if (this.lazyInitialization) {
-			context.addBeanFactoryPostProcessor(new LazyInitializationBeanFactoryPostProcessor());
-		}
-		// Load the sources
-		Set<Object> sources = getAllSources();
-		Assert.notEmpty(sources, "Sources must not be empty");
-        //load方法完成该功能
-		load(context, sources.toArray(new Object[0]));
-		listeners.contextLoaded(context);
-	}
-
-
-	/**
-	 * Load beans into the application context.
-	 * @param context the context to load beans into
-	 * @param sources the sources to load
-	 * 加载bean对象到context中
-	 */
-	protected void load(ApplicationContext context, Object[] sources) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Loading source " + StringUtils.arrayToCommaDelimitedString(sources));
-		}
-        //获取bean对象定义的加载器
-		BeanDefinitionLoader loader = createBeanDefinitionLoader(getBeanDefinitionRegistry(context), sources);
-		if (this.beanNameGenerator != null) {
-			loader.setBeanNameGenerator(this.beanNameGenerator);
-		}
-		if (this.resourceLoader != null) {
-			loader.setResourceLoader(this.resourceLoader);
-		}
-		if (this.environment != null) {
-			loader.setEnvironment(this.environment);
-		}
-		loader.load();
-	}
-
-	/**
-	 * Load the sources into the reader.
-	 * @return the number of loaded beans
-	 */
-	int load() {
-		int count = 0;
-		for (Object source : this.sources) {
-			count += load(source);
-		}
-		return count;
-	}
-```
-
-3、实际执行load的是BeanDefinitionLoader中的load方法，如下：
-
-```java
-	//实际记载bean的方法
-	private int load(Object source) {
-		Assert.notNull(source, "Source must not be null");
-        //如果是class类型，启用注解类型
-		if (source instanceof Class<?>) {
-			return load((Class<?>) source);
-		}
-        //如果是resource类型，启动xml解析
-		if (source instanceof Resource) {
-			return load((Resource) source);
-		}
-        //如果是package类型，启用扫描包，例如@ComponentScan
-		if (source instanceof Package) {
-			return load((Package) source);
-		}
-        //如果是字符串类型，直接加载
-		if (source instanceof CharSequence) {
-			return load((CharSequence) source);
-		}
-		throw new IllegalArgumentException("Invalid source type " + source.getClass());
-	}
-```
-
-4、下面方法将用来判断是否资源的类型，是使用groovy加载还是使用注解的方式
-
-```java
-	private int load(Class<?> source) {
-        //判断使用groovy脚本
-		if (isGroovyPresent() && GroovyBeanDefinitionSource.class.isAssignableFrom(source)) {
-			// Any GroovyLoaders added in beans{} DSL can contribute beans here
-			GroovyBeanDefinitionSource loader = BeanUtils.instantiateClass(source, GroovyBeanDefinitionSource.class);
-			load(loader);
-		}
-        //使用注解加载
-		if (isComponent(source)) {
-			this.annotatedReader.register(source);
-			return 1;
-		}
-		return 0;
-	}
-```
-
-5、下面方法判断启动类中是否包含@Component注解，但是会神奇的发现我们的启动类中并没有该注解，继续更进发现MergedAnnotations类传入了一个参数SearchStrategy.TYPE_HIERARCHY，会查找继承关系中是否包含这个注解，@SpringBootApplication-->@SpringBootConfiguration-->@Configuration-->@Component,当找到@Component注解之后，会把该对象注册到AnnotatedBeanDefinitionReader对象中
-
-```java
-private boolean isComponent(Class<?> type) {
-   // This has to be a bit of a guess. The only way to be sure that this type is
-   // eligible is to make a bean definition out of it and try to instantiate it.
-   if (MergedAnnotations.from(type, SearchStrategy.TYPE_HIERARCHY).isPresent(Component.class)) {
-      return true;
-   }
-   // Nested anonymous classes are not eligible for registration, nor are groovy
-   // closures
-   return !type.getName().matches(".*\\$_.*closure.*") && !type.isAnonymousClass()
-         && type.getConstructors() != null && type.getConstructors().length != 0;
-}
-
-	/**
-	 * Register a bean from the given bean class, deriving its metadata from
-	 * class-declared annotations.
-	 * 从给定的bean class中注册一个bean对象，从注解中找到相关的元数据
-	 */
-	private <T> void doRegisterBean(Class<T> beanClass, @Nullable String name,
-			@Nullable Class<? extends Annotation>[] qualifiers, @Nullable Supplier<T> supplier,
-			@Nullable BeanDefinitionCustomizer[] customizers) {
-
-		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(beanClass);
-		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
-			return;
-		}
-
-		abd.setInstanceSupplier(supplier);
-		ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(abd);
-		abd.setScope(scopeMetadata.getScopeName());
-		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry));
-
-		AnnotationConfigUtils.processCommonDefinitionAnnotations(abd);
-		if (qualifiers != null) {
-			for (Class<? extends Annotation> qualifier : qualifiers) {
-				if (Primary.class == qualifier) {
-					abd.setPrimary(true);
-				}
-				else if (Lazy.class == qualifier) {
-					abd.setLazyInit(true);
-				}
-				else {
-					abd.addQualifier(new AutowireCandidateQualifier(qualifier));
-				}
-			}
-		}
-		if (customizers != null) {
-			for (BeanDefinitionCustomizer customizer : customizers) {
-				customizer.customize(abd);
-			}
-		}
-
-		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName);
-		definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
-		BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, this.registry);
-	}
-
-	/**
-	 * Register the given bean definition with the given bean factory.
-	 * 注册主类，如果有别名可以设置别名
-	 */
-	public static void registerBeanDefinition(
-			BeanDefinitionHolder definitionHolder, BeanDefinitionRegistry registry)
-			throws BeanDefinitionStoreException {
-
-		// Register bean definition under primary name.
-		String beanName = definitionHolder.getBeanName();
-		registry.registerBeanDefinition(beanName, definitionHolder.getBeanDefinition());
-
-		// Register aliases for bean name, if any.
-		String[] aliases = definitionHolder.getAliases();
-		if (aliases != null) {
-			for (String alias : aliases) {
-				registry.registerAlias(beanName, alias);
-			}
-		}
-	}
-
-//@SpringBootApplication
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Inherited
-@SpringBootConfiguration
-@EnableAutoConfiguration
-@ComponentScan(excludeFilters = { @Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
-		@Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
-public @interface SpringBootApplication {}
-
-//@SpringBootConfiguration
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Configuration
-public @interface SpringBootConfiguration {}
-
-//@Configuration
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Component
-public @interface Configuration {}
-```
-
-当看完上述代码之后，只是完成了启动对象的注入，自动装配还没有开始，下面开始进入到自动装配。
+1、略。当看完上述代码之后，只是完成了启动对象的注入，自动装配还没有开始，下面开始进入到自动装配。
 
 6、自动装配入口，从刷新容器开始
 
@@ -1058,151 +766,6 @@ public @interface Configuration {}
 
 8、查看invokeBeanFactoryPostProcessors的具体执行方法
 
-```java
-	public static void invokeBeanFactoryPostProcessors(
-			ConfigurableListableBeanFactory beanFactory, List<BeanFactoryPostProcessor> beanFactoryPostProcessors) {
-
-		// Invoke BeanDefinitionRegistryPostProcessors first, if any.
-		Set<String> processedBeans = new HashSet<>();
-
-		if (beanFactory instanceof BeanDefinitionRegistry) {
-			BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
-			List<BeanFactoryPostProcessor> regularPostProcessors = new ArrayList<>();
-			List<BeanDefinitionRegistryPostProcessor> registryProcessors = new ArrayList<>();
-			//开始遍历三个内部类，如果属于BeanDefinitionRegistryPostProcessor子类，加入到bean注册的集合，否则加入到regularPostProcessors
-			for (BeanFactoryPostProcessor postProcessor : beanFactoryPostProcessors) {
-				if (postProcessor instanceof BeanDefinitionRegistryPostProcessor) {
-					BeanDefinitionRegistryPostProcessor registryProcessor =
-							(BeanDefinitionRegistryPostProcessor) postProcessor;
-					registryProcessor.postProcessBeanDefinitionRegistry(registry);
-					registryProcessors.add(registryProcessor);
-				}
-				else {
-					regularPostProcessors.add(postProcessor);
-				}
-			}
-
-			// Do not initialize FactoryBeans here: We need to leave all regular beans
-			// uninitialized to let the bean factory post-processors apply to them!
-			// Separate between BeanDefinitionRegistryPostProcessors that implement
-			// PriorityOrdered, Ordered, and the rest.
-			List<BeanDefinitionRegistryPostProcessor> currentRegistryProcessors = new ArrayList<>();
-
-			// First, invoke the BeanDefinitionRegistryPostProcessors that implement PriorityOrdered.
-            //通过BeanDefinitionRegistryPostProcessor获取到对应的处理类“org.springframework.context.annotation.internalConfigurationAnnotationProcessor”，但是需要注意的是这个类在springboot中搜索不到，这个类的完全限定名在AnnotationConfigEmbeddedWebApplicationContext中，在进行初始化的时候会装配几个类，在创建AnnotatedBeanDefinitionReader对象的时候会将该类注册到bean对象中，此处可以看到internalConfigurationAnnotationProcessor为bean名称，容器中真正的类是ConfigurationClassPostProcessor
-			String[] postProcessorNames =
-					beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
-            //首先执行类型为PriorityOrdered的BeanDefinitionRegistryPostProcessor
-            //PriorityOrdered类型表明为优先执行
-			for (String ppName : postProcessorNames) {
-				if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
-                    //获取对应的bean
-					currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
-                    //用来存储已经执行过的BeanDefinitionRegistryPostProcessor
-					processedBeans.add(ppName);
-				}
-			}
-			sortPostProcessors(currentRegistryProcessors, beanFactory);
-			registryProcessors.addAll(currentRegistryProcessors);
-            //开始执行装配逻辑
-			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
-			currentRegistryProcessors.clear();
-
-			// Next, invoke the BeanDefinitionRegistryPostProcessors that implement Ordered.
-            //其次执行类型为Ordered的BeanDefinitionRegistryPostProcessor
-            //Ordered表明按顺序执行
-			postProcessorNames = beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
-			for (String ppName : postProcessorNames) {
-				if (!processedBeans.contains(ppName) && beanFactory.isTypeMatch(ppName, Ordered.class)) {
-					currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
-					processedBeans.add(ppName);
-				}
-			}
-			sortPostProcessors(currentRegistryProcessors, beanFactory);
-			registryProcessors.addAll(currentRegistryProcessors);
-			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
-			currentRegistryProcessors.clear();
-
-			// Finally, invoke all other BeanDefinitionRegistryPostProcessors until no further ones appear.
-            //循环中执行类型不为PriorityOrdered，Ordered类型的BeanDefinitionRegistryPostProcessor
-			boolean reiterate = true;
-			while (reiterate) {
-				reiterate = false;
-				postProcessorNames = beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
-				for (String ppName : postProcessorNames) {
-					if (!processedBeans.contains(ppName)) {
-						currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
-						processedBeans.add(ppName);
-						reiterate = true;
-					}
-				}
-				sortPostProcessors(currentRegistryProcessors, beanFactory);
-				registryProcessors.addAll(currentRegistryProcessors);
-				invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
-				currentRegistryProcessors.clear();
-			}
-
-			// Now, invoke the postProcessBeanFactory callback of all processors handled so far.	
-            //执行父类方法，优先执行注册处理类
-			invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
-            //执行有规则处理类
-			invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
-		}
-
-		else {
-			// Invoke factory processors registered with the context instance.
-			invokeBeanFactoryPostProcessors(beanFactoryPostProcessors, beanFactory);
-		}
-
-		// Do not initialize FactoryBeans here: We need to leave all regular beans
-		// uninitialized to let the bean factory post-processors apply to them!
-		String[] postProcessorNames =
-				beanFactory.getBeanNamesForType(BeanFactoryPostProcessor.class, true, false);
-
-		// Separate between BeanFactoryPostProcessors that implement PriorityOrdered,
-		// Ordered, and the rest.
-		List<BeanFactoryPostProcessor> priorityOrderedPostProcessors = new ArrayList<>();
-		List<String> orderedPostProcessorNames = new ArrayList<>();
-		List<String> nonOrderedPostProcessorNames = new ArrayList<>();
-		for (String ppName : postProcessorNames) {
-			if (processedBeans.contains(ppName)) {
-				// skip - already processed in first phase above
-			}
-			else if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
-				priorityOrderedPostProcessors.add(beanFactory.getBean(ppName, BeanFactoryPostProcessor.class));
-			}
-			else if (beanFactory.isTypeMatch(ppName, Ordered.class)) {
-				orderedPostProcessorNames.add(ppName);
-			}
-			else {
-				nonOrderedPostProcessorNames.add(ppName);
-			}
-		}
-
-		// First, invoke the BeanFactoryPostProcessors that implement PriorityOrdered.
-		sortPostProcessors(priorityOrderedPostProcessors, beanFactory);
-		invokeBeanFactoryPostProcessors(priorityOrderedPostProcessors, beanFactory);
-
-		// Next, invoke the BeanFactoryPostProcessors that implement Ordered.
-		List<BeanFactoryPostProcessor> orderedPostProcessors = new ArrayList<>(orderedPostProcessorNames.size());
-		for (String postProcessorName : orderedPostProcessorNames) {
-			orderedPostProcessors.add(beanFactory.getBean(postProcessorName, BeanFactoryPostProcessor.class));
-		}
-		sortPostProcessors(orderedPostProcessors, beanFactory);
-		invokeBeanFactoryPostProcessors(orderedPostProcessors, beanFactory);
-
-		// Finally, invoke all other BeanFactoryPostProcessors.
-		List<BeanFactoryPostProcessor> nonOrderedPostProcessors = new ArrayList<>(nonOrderedPostProcessorNames.size());
-		for (String postProcessorName : nonOrderedPostProcessorNames) {
-			nonOrderedPostProcessors.add(beanFactory.getBean(postProcessorName, BeanFactoryPostProcessor.class));
-		}
-		invokeBeanFactoryPostProcessors(nonOrderedPostProcessors, beanFactory);
-
-		// Clear cached merged bean definitions since the post-processors might have
-		// modified the original metadata, e.g. replacing placeholders in values...
-		beanFactory.clearMetadataCache();
-	}
-```
 
 9、开始执行自动配置逻辑（启动类指定的配置，非默认配置），可以通过debug的方式一层层向里进行查找，会发现最终会在ConfigurationClassParser类中，此类是所有配置类的解析类，所有的解析逻辑在parser.parse(candidates)中
 
@@ -1275,14 +838,7 @@ public void parse(Set<BeanDefinitionHolder> configCandidates) {
 10、继续跟进doProcessConfigurationClass方法，此方式是支持注解配置的核心逻辑
 
 ```java
-/**
-	 * Apply processing and build a complete {@link ConfigurationClass} by reading the
-	 * annotations, members and methods from the source class. This method can be called
-	 * multiple times as relevant sources are discovered.
-	 * @param configClass the configuration class being build
-	 * @param sourceClass a source class
-	 * @return the superclass, or {@code null} if none found or previously processed
-	 */
+
 	@Nullable
 	protected final SourceClass doProcessConfigurationClass(ConfigurationClass configClass, SourceClass sourceClass)
 			throws IOException {
@@ -1508,24 +1064,6 @@ public void process() {
 
 ​		在springboot框架中，大家应该发现了有一个内嵌的tomcat，在之前的开发流程中，每次写好代码之后必须要将项目部署到一个额外的web服务器中，只有这样才可以运行，这个明显要麻烦很多，而使用springboot的时候，你会发现在启动项目的时候可以直接按照java应用程序的方式来启动项目，不需要额外的环境支持，也不需要tomcat服务器，这是因为在springboot框架中内置了tomcat.jar，来通过main方法启动容器，达到一键开发部署的方式，不需要额外的任何其他操作。
 
-# mybatis的优缺点有哪些？
-
-1、Mybait的优点：
-
-（1）简单易学，容易上手（相比于Hibernate）  基于SQL编程；
-（2）JDBC相比，减少了50%以上的代码量，消除了JDBC大量冗余的代码，不需要手动开关连接；
-（3）很好的与各种数据库兼容（因为MyBatis使用JDBC来连接数据库，所以只要JDBC支持的数据库MyBatis都支持，而JDBC提供了可扩展性，所以只要这个数据库有针对Java的jar包就可以就可以与MyBatis兼容），开发人员不需要考虑数据库的差异性。
-（4）提供了很多第三方插件（分页插件 / 逆向工程）；
-（5）能够与Spring很好的集成；
-（6）MyBatis相当灵活，不会对应用程序或者数据库的现有设计强加任何影响，SQL写在XML里，从程序代码中彻底分离，解除sql与程序代码的耦合，便于统一管理和优化，并可重用。
-（7）提供XML标签，支持编写动态SQL语句。
-（8）提供映射标签，支持对象与数据库的ORM字段关系映射。
-（9）提供对象关系映射标签，支持对象关系组建维护。
-2、MyBatis框架的缺点：
-
-（1）SQL语句的编写工作量较大，尤其是字段多、关联表多时，更是如此，对开发人员编写SQL语句的功底有一定要求。
-（2）SQL语句依赖于数据库，导致数据库移植性差，不能随意更换数据库。
-
 # mybatis和hibernate有什么区别？
 
 Hibernate的优点：
@@ -1599,13 +1137,6 @@ mybatis只支持针对ParameterHandler、ResultSetHandler、StatementHandler、E
 
 索引的基本原理
 
-1、为什么要有索引?
-一般的应用系统，读写比例在10:1左右，而且插入操作和一般的更新操作很少出现性能问题，在生产环境中，我们遇到最多的，也是最容易出问题的，还是一些复杂的查询操作，因此对查询语句的优化显然是重中之重。说起加速查询，就不得不提到索引了。
-2、什么是索引？
-索引在MySQL中也叫是一种“键”，是存储引擎用于快速找到记录的一种数据结构。索引对于良好的性能
-非常关键，尤其是当表中的数据量越来越大时，索引对于性能的影响愈发重要。
-索引优化应该是对查询性能优化最有效的手段了。索引能够轻易将查询性能提高好几个数量级。
-索引相当于字典的音序表，如果要查某个字，如果不使用音序表，则需要从几百页中逐页去查。	
 
 3、索引的原理
 
@@ -1628,6 +1159,8 @@ btree类型的索引：b+树，层数越多，数据量指数级增长（我们�
 
 # mysql聚簇和非聚簇索引的区别是什么？
 
+        聚簇索引就是按照每张表的主键构造一颗B+树，同时叶子节点中存放的就是整张表的行记录数据，也将聚集索引的叶子节点称为数据页。
+        我们知道，在InnoDB中，数据是以B+Tree的形式存储的，其特点就是数据都存储在叶子节点上，非叶子节点上只存索引信息，即key值和指向子节点的指针。这种索引和数据的存储方式就叫做聚簇索引
 ​		mysql的索引类型跟存储引擎是相关的，innodb存储引擎数据文件跟索引文件全部放在ibd文件中，而myisam的数据文件放在myd文件中，索引放在myi文件中，其实区分聚簇索引和非聚簇索引非常简单，只要判断数据跟索引是否存储在一起就可以了。
 
 ​		innodb存储引擎在进行数据插入的时候，数据必须要跟索引放在一起，如果有主键就使用主键，没有主键就使用唯一键，没有唯一键就使用6字节的rowid，因此跟数据绑定在一起的就是聚簇索引，而为了避免数据冗余存储，其他的索引的叶子节点中存储的都是聚簇索引的key值，因此innodb中既有聚簇索引也有非聚簇索引，而myisam中只有非聚簇索引。
@@ -1700,7 +1233,6 @@ B+树索引的关键字检索效率比较平均，不像B树那样波动大，�
 
 ​       可以使用explain+SQL语句来模拟优化器执行SQL查询语句，从而知道mysql是如何处理sql语句的。
 
-​	   官网地址： https://dev.mysql.com/doc/refman/5.7/en/explain-output.html 
 
 1、执行计划中包含的信息
 
@@ -1808,39 +1340,6 @@ system > const > eq_ref > ref > fulltext > ref_or_null > index_merge > unique_su
 
 一般情况下，得保证查询至少达到range级别，最好能达到ref
 
-```sql
---all:全表扫描，一般情况下出现这样的sql语句而且数据量比较大的话那么就需要进行优化。
-explain select * from emp;
-
---index：全索引扫描这个比all的效率要好，主要有两种情况，一种是当前的查询时覆盖索引，即我们需要的数据在索引中就可以索取，或者是使用了索引进行排序，这样就避免数据的重排序
-explain  select empno from emp;
-
---range：表示利用索引查询的时候限制了范围，在指定范围内进行查询，这样避免了index的全索引扫描，适用的操作符： =, <>, >, >=, <, <=, IS NULL, BETWEEN, LIKE, or IN() 
-explain select * from emp where empno between 7000 and 7500;
-
---index_subquery：利用索引来关联子查询，不再扫描全表
-explain select * from emp where emp.job in (select job from t_job);
-
---unique_subquery:该连接类型类似与index_subquery,使用的是唯一索引
- explain select * from emp e where e.deptno in (select distinct deptno from dept);
- 
---index_merge：在查询过程中需要多个索引组合使用，没有模拟出来
-explain select * from rental where rental_date like '2005-05-26 07:12:2%' and inventory_id=3926 and customer_id=321\G
-
---ref_or_null：对于某个字段即需要关联条件，也需要null值的情况下，查询优化器会选择这种访问方式
-explain select * from emp e where  e.mgr is null or e.mgr=7369;
-
---ref：使用了非唯一性索引进行数据的查找
- create index idx_3 on emp(deptno);
- explain select * from emp e,dept d where e.deptno =d.deptno;
-
---eq_ref ：使用唯一性索引进行数据查找
-explain select * from emp,emp2 where emp.empno = emp2.empno;
-
---const：这个表至多有一个匹配行，
-explain select * from emp where empno = 7369;
- 
---system：表只有一行记录（等于系统表），这是const类型的特例，平时不会出现
 ```
 
  **possible_keys** 
@@ -1887,23 +1386,6 @@ explain select * from emp;
 
 包含额外的信息。
 
-```sql
---using filesort:说明mysql无法利用索引进行排序，只能利用排序算法进行排序，会消耗额外的位置
-explain select * from emp order by sal;
-
---using temporary:建立临时表来保存中间结果，查询完成之后把临时表删除
-explain select ename,count(*) from emp where deptno = 10 group by ename;
-
---using index:这个表示当前的查询时覆盖索引的，直接从索引中读取数据，而不用访问数据表。如果同时出现using where 表名索引被用来执行索引键值的查找，如果没有，表面索引被用来读取数据，而不是真的查找
-explain select deptno,count(*) from emp group by deptno limit 10;
-
---using where:使用where进行条件过滤
-explain select * from t_user where id = 1;
-
---using join buffer:使用连接缓存，情况没有模拟出来
-
---impossible where：where语句的结果总是false
-explain select * from emp where empno = 7469;
 ```
 
 # 事务的基本特性是什么？
@@ -1955,189 +1437,6 @@ SERIALIZABLE 可串行化
 3、分析语句的执行计划，然后获得其使用索引的情况，之后修改语句或者修改索引，使得语句可以尽可能的命中索引
 
 4、如果对语句的优化已经无法进行，可以考虑表中的数据量是否太大，如果是的话可以进行横向或者纵向的分表。
-
-# ACID是靠什么保证的？
-
-原子性由undolog日志来保证，它记录了需要回滚的日志信息，事务回滚时撤销已经执行成功的sql
-
-一致性是由其他三大特性保证，程序代码要保证业务上的一致性
-
-隔离性是由MVCC来保证
-
-持久性由redolog来保证，mysql修改数据的时候会在redolog中记录一份日志数据，就算数据没有保存成功，只要日志保存成功了，数据仍然不会丢失
-
-# 什么是MVCC？
-
-1、MVCC
-
-​		MVCC，全称Multi-Version Concurrency Control，即多版本并发控制。MVCC是一种并发控制的方法，一般在数据库管理系统中，实现对数据库的并发访问，在编程语言中实现事务内存。
-
- 		MVCC在MySQL InnoDB中的实现主要是为了提高数据库并发性能，用更好的方式去处理读写冲突，做到即使有读写冲突时，也能做到不加锁，非阻塞并发读。
-
-2、当前读
-
-​		像select lock in share mode(共享锁), select for update ; update, insert ,delete(排他锁)这些操作都是一种当前读，为什么叫当前读？就是它读取的是记录的最新版本，读取时还要保证其他并发事务不能修改当前记录，会对读取的记录进行加锁。
-
-3、快照读（提高数据库的并发查询能力）
-
-​		像不加锁的select操作就是快照读，即不加锁的非阻塞读；快照读的前提是隔离级别不是串行级别，串行级别下的快照读会退化成当前读；之所以出现快照读的情况，是基于提高并发性能的考虑，快照读的实现是基于多版本并发控制，即MVCC,可以认为MVCC是行锁的一个变种，但它在很多情况下，避免了加锁操作，降低了开销；既然是基于多版本，即快照读可能读到的并不一定是数据的最新版本，而有可能是之前的历史版本
-
-4、当前读、快照读、MVCC关系
-
-​		MVCC多版本并发控制指的是维持一个数据的多个版本，使得读写操作没有冲突，快照读是MySQL为实现MVCC的一个非阻塞读功能。MVCC模块在MySQL中的具体实现是由三个隐式字段，undo日志、read view三个组件来实现的。
-
-# MVCC解决的问题是什么？
-
-​		数据库并发场景有三种，分别为：
-
-​		1、读读：不存在任何问题，也不需要并发控制
-
-​		2、读写：有线程安全问题，可能会造成事务隔离性问题，可能遇到脏读、幻读、不可重复读
-
-​		3、写写：有线程安全问题，可能存在更新丢失问题
-
-​		MVCC是一种用来解决读写冲突的无锁并发控制，也就是为事务分配单项增长的时间戳，为每个修改保存一个版本，版本与事务时间戳关联，读操作只读该事务开始前的数据库的快照，所以MVCC可以为数据库解决一下问题：
-
-​		1、在并发读写数据库时，可以做到在读操作时不用阻塞写操作，写操作也不用阻塞读操作，提高了数据库并发读写的性能
-
-​		2、解决脏读、幻读、不可重复读等事务隔离问题，但是不能解决更新丢失问题
-
-# MVCC实现原理是什么？
-
-​		mvcc的实现原理主要依赖于记录中的三个隐藏字段，undolog，read view来实现的。
-
-​		**隐藏字段**
-
-​		每行记录除了我们自定义的字段外，还有数据库隐式定义的DB_TRX_ID,DB_ROLL_PTR,DB_ROW_ID等字段
-
-​		DB_TRX_ID
-
-​		6字节，最近修改事务id，记录创建这条记录或者最后一次修改该记录的事务id
-
-​		DB_ROLL_PTR
-
-​		7字节，回滚指针，指向这条记录的上一个版本,用于配合undolog，指向上一个旧版本
-
-​		DB_ROW_JD
-
-​		6字节，隐藏的主键，如果数据表没有主键，那么innodb会自动生成一个6字节的row_id
-
-​		记录如图所示：
-
-![image-20210225233929554](images/数据案例.png)
-
-​		在上图中，DB_ROW_ID是数据库默认为该行记录生成的唯一隐式主键，DB_TRX_ID是当前操作该记录的事务ID，DB_ROLL_PTR是一个回滚指针，用于配合undo日志，指向上一个旧版本
-
-​		**undo log**
-
-​		undolog被称之为回滚日志，表示在进行insert，delete，update操作的时候产生的方便回滚的日志
-
-​		当进行insert操作的时候，产生的undolog只在事务回滚的时候需要，并且在事务提交之后可以被立刻丢弃
-
-​		当进行update和delete操作的时候，产生的undolog不仅仅在事务回滚的时候需要，在快照读的时候也需要，所以不能随便删除，只有在快照读或事务回滚不涉及该日志时，对应的日志才会被purge线程统一清除（当数据发生更新和删除操作的时候都只是设置一下老记录的deleted_bit，并不是真正的将过时的记录删除，因为为了节省磁盘空间，innodb有专门的purge线程来清除deleted_bit为true的记录，如果某个记录的deleted_id为true，并且DB_TRX_ID相对于purge线程的read view 可见，那么这条记录一定时可以被清除的）
-
-​		**下面我们来看一下undolog生成的记录链**
-
-​		1、假设有一个事务编号为1的事务向表中插入一条记录，那么此时行数据的状态为：
-
-![image-20210225235444975](images/1.png)
-
-​		2、假设有第二个事务编号为2对该记录的name做出修改，改为lisi
-
-​		在事务2修改该行记录数据时，数据库会对该行加排他锁
-
-​		然后把该行数据拷贝到undolog中，作为 旧记录，即在undolog中有当前行的拷贝副本
-
-​		拷贝完毕后，修改该行name为lisi，并且修改隐藏字段的事务id为当前事务2的id，回滚指针指向拷贝到undolog的副本记录中
-
-​		事务提交后，释放锁
-
-![image-20210313220450629](images/2.png)
-
-​		3、假设有第三个事务编号为3对该记录的age做了修改，改为32
-
-​		在事务3修改该行数据的时，数据库会对该行加排他锁
-
-​		然后把该行数据拷贝到undolog中，作为旧纪录，发现该行记录已经有undolog了，那么最新的旧数据作为链表的表头，插在该行记录的undolog最前面
-
-​		修改该行age为32岁，并且修改隐藏字段的事务id为当前事务3的id，回滚指针指向刚刚拷贝的undolog的副本记录
-
-​		事务提交，释放锁
-
-![image-20210313220337624](images/3.png)
-
-​		从上述的一系列图中，大家可以发现，不同事务或者相同事务的对同一记录的修改，会导致该记录的undolog生成一条记录版本线性表，即链表，undolog的链首就是最新的旧记录，链尾就是最早的旧记录。
-
-​		**Read View**
-
-​		上面的流程如果看明白了，那么大家需要再深入理解下read view的概念了。
-
-​		Read View是事务进行快照读操作的时候生产的读视图，在该事务执行快照读的那一刻，会生成一个数据系统当前的快照，记录并维护系统当前活跃事务的id，事务的id值是递增的。
-
-​		其实Read View的最大作用是用来做可见性判断的，也就是说当某个事务在执行快照读的时候，对该记录创建一个Read View的视图，把它当作条件去判断当前事务能够看到哪个版本的数据，有可能读取到的是最新的数据，也有可能读取的是当前行记录的undolog中某个版本的数据
-
-​		Read View遵循的可见性算法主要是将要被修改的数据的最新记录中的DB_TRX_ID（当前事务id）取出来，与系统当前其他活跃事务的id去对比，如果DB_TRX_ID跟Read View的属性做了比较，不符合可见性，那么就通过DB_ROLL_PTR回滚指针去取出undolog中的DB_TRX_ID做比较，即遍历链表中的DB_TRX_ID，直到找到满足条件的DB_TRX_ID,这个DB_TRX_ID所在的旧记录就是当前事务能看到的最新老版本数据。
-
-​		Read View的可见性规则如下所示：
-
-​		首先要知道Read View中的三个全局属性：
-
-​		trx_list:一个数值列表，用来维护Read View生成时刻系统正活跃的事务ID（1,2,3）
-
-​		up_limit_id:记录trx_list列表中事务ID最小的ID（1）
-
-​		low_limit_id:Read View生成时刻系统尚未分配的下一个事务ID，（4）
-
-​		具体的比较规则如下：
-
-​		1、首先比较DB_TRX_ID < up_limit_id,如果小于，则当前事务能看到DB_TRX_ID所在的记录，如果大于等于进入下一个判断
-
-​		2、接下来判断DB_TRX_ID >= low_limit_id,如果大于等于则代表DB_TRX_ID所在的记录在Read View生成后才出现的，那么对于当前事务肯定不可见，如果小于，则进入下一步判断
-
-​		3、判断DB_TRX_ID是否在活跃事务中，如果在，则代表在Read View生成时刻，这个事务还是活跃状态，还没有commit，修改的数据，当前事务也是看不到，如果不在，则说明这个事务在Read View生成之前就已经开始commit，那么修改的结果是能够看见的。
-
-7、MVCC的整体处理流程
-
-假设有四个事务同时在执行，如下图所示：
-
-| 事务1    | 事务2    | 事务3    | 事务4        |
-| -------- | -------- | -------- | ------------ |
-| 事务开始 | 事务开始 | 事务开始 | 事务开始     |
-| ......   | ......   | ......   | 修改且已提交 |
-| 进行中   | 快照读   | 进行中   |              |
-| ......   | ......   | ......   |              |
-
-从上述表格中，我们可以看到，当事务2对某行数据执行了快照读，数据库为该行数据生成一个Read View视图，可以看到事务1和事务3还在活跃状态，事务4在事务2快照读的前一刻提交了更新，所以，在Read View中记录了系统当前活跃事务1，3，维护在一个列表中。同时可以看到up_limit_id的值为1，而low_limit_id为5，如下图所示：
-
-![image-20210520143604440](images/image-20210520143604440.png)
-
-在上述的例子中，只有事务4修改过该行记录，并在事务2进行快照读前，就提交了事务，所以该行当前数据的undolog如下所示：
-
-![image-20210520143717928](images/image-20210520143717928.png)
-
-
-
-​		当事务2在快照读该行记录的是，会拿着该行记录的DB_TRX_ID去跟up_limit_id,lower_limit_id和活跃事务列表进行比较，判读事务2能看到该行记录的版本是哪个。
-
-​		具体流程如下：先拿该行记录的事务ID（4）去跟Read View中的up_limit_id相比较，判断是否小于，通过对比发现不小于，所以不符合条件，继续判断4是否大于等于low_limit_id,通过比较发现也不大于，所以不符合条件，判断事务4是否处理trx_list列表中，发现不再次列表中，那么符合可见性条件，所以事务4修改后提交的最新结果对事务2 的快照是可见的，因此，事务2读取到的最新数据记录是事务4所提交的版本，而事务4提交的版本也是全局角度的最新版本。如下图所示：
-
-
-
-![image-20210520143742317](images/image-20210520143742317.png)
-
-当上述的内容都看明白了的话，那么大家就应该能够搞清楚这几个核心概念之间的关系了，下面我们讲一个不同的隔离级别下的快照读的不同。
-
-8、RC、RR级别下的InnoDB快照读有什么不同
-
-​		因为Read View生成时机的不同，从而造成RC、RR级别下快照读的结果的不同
-
-​		1、在RR级别下的某个事务的对某条记录的第一次快照读会创建一个快照即Read View,将当前系统活跃的其他事务记录起来，此后在调用快照读的时候，还是使用的是同一个Read View,所以只要当前事务在其他事务提交更新之前使用过快照读，那么之后的快照读使用的都是同一个Read View,所以对之后的修改不可见
-
-​		2、在RR级别下，快照读生成Read View时，Read View会记录此时所有其他活动和事务的快照，这些事务的修改对于当前事务都是不可见的，而早于Read View创建的事务所做的修改均是可见
-
-​		3、在RC级别下，事务中，每次快照读都会新生成一个快照和Read View,这就是我们在RC级别下的事务中可以看到别的事务提交的更新的原因。
-
-​		**总结：在RC隔离级别下，是每个快照读都会生成并获取最新的Read View,而在RR隔离级别下，则是同一个事务中的第一个快照读才会创建Read View，之后的快照读获取的都是同一个Read View.**
 
 # 什么是mysql的主从复制？
 
@@ -2241,96 +1540,6 @@ MyISAM存储引擎: 是MySQL官方提供的存储引擎，主要面向OLAP(Onlin
 但是会降低插入、删除、更新表的速度，因为在执行这些写操作的时候，还要操作索引文件
 
 索引需要占物理空间，除了数据表占数据空间之外，每一个索引还要占一定的物理空间，如果要简历聚簇索引，那么需要的空间就会更大，如果非聚簇索引很多，一旦聚簇索引改变，那么所有非聚簇索引都会跟着变
-
-
-
-# 什么是字节码？
-
-因为JVM针对各种操作系统和平台都进行了定制，无论在什么平台，都可以通过javac命令将一个.java文件编译成固定格式的字节码（.class文件）供JVM使用。之所以被称为字节码，是因为**.class文件是由十六进制值组成的，JVM以两个十六进制值为一组，就是以字节为单位进行读取**
-格式如下
-![](images/bytecode.png)
-
-# 字节码的组成结构是什么？
-
-JVM对字节码的规范是有要求的，要求每一个字节码文件都要有十部分固定的顺序组成，如下图：
-![](images/bytecode2.png)
-
-1. 魔数
-
-所有的.class文件的前4个字节都是魔数，魔数以一个固定值：0xCAFEBABE，放在文件的开头，JVM就可以根据这个文件的开头来判断这个文件是否可能是一个.class文件，如果是以这个开头，才会往后执行下面的操作，这个魔数的固定值是Java之父James Gosling指定的，意为CafeBabe（咖啡宝贝）
-
-2. 版本号
-
-版本号是魔术之后的4个字节，前两个字节表示次版本号（Minor Version），后两个字节表示主版本号（Major Version），上面的0000 0032，次版本号0000转为十进制是0，主版本号0032 转为十进制50，对应下图的版本映射关系，可以看到对应的java版本号是1.6
-
-![image.png](images/bytecodeversion.png)
-
-3. 常量池
-
-紧接着主版本号之后的字节为常量池入口，常量池中有两类常量：字面量和符号引用，字面量是代码中申明为Final的常量值，符号引用是如类和接口的全局限定名、字段的名称和描述符、方法的名称和描述符。常量池整体分为两个部分：常量池计数器以及常量池数据区
-![](images/changlangchi.png)
-
-4. 访问标志
-
-常量池结束后的两个字节，描述的是类还是接口，以及是否被Public、Abstract、Final等修饰符修饰，JVM规范规定了9种访问标示（Access_Flag）JVM是通过按位或操作来描述所有的访问标示的，比如类的修饰符是Public Final，则对应的访问修饰符的值为ACC_PUBLIC | ACC_FINAL，即0x0001 | 0x0010=0x0011
-![](images/access_flag.png)
-
-
-5. 当前类索引
-
-访问标志后的两个字节，描述的是当前类的全限定名，这两个字节保存的值是常量池中的索引值，根据索引值就能在常量池中找到这个类的全限定名
-​
-
-
-6. 父类索引
-
-当前类名后的两个字节，描述的父类的全限定名，也是保存的常量池中的索引值
-
-7. 接口索引
-
-父类名称后的两个字节，是接口计数器，描述了该类或者父类实现的接口数量，紧接着的n个字节是所有接口名称的字符串常量的索引值
-
-8. 字段表
-
-用于描述类和接口中声明的变量，包含类级别的变量和实例变量，但是不包含方法内部声明的局部变量，字段表也分为两个部分，第一部分是两个字节，描述字段个数，第二部分是每个字段的详细信息fields_info
-![](images/field.png)
-
-9. 方法表
-
-字段表结束后为方法表，方法表也分为两个部分，第一个部分是两个字节表述方法的个数，第二部分是每个方法的详细信息
-方法的访问信息比较复杂，包括方法的访问标志、方法名、方法的描述符和方法的属性：
-![](images/method.png)
-
-10. 附加属性
-
-字节码的最后一部分，该项存放了在该文件中类或接口所定义属性的基本信息。
-
-
-# class初始化过程是什么？
-
-首先类加载的机制过程分为5个部分：加载、验证、准备、解析、初始化
-![](images/class-int.png)
-
-
-我们现在主要分析类的初始化过程：
-
-1. 类的初始化阶段，是真正开始执行类中定义的java程序代码(字节码)并按程序员的意图去初始化类变量的过程。更直接地说，初始化阶段就是执行类构造器<clinit>()方法的过程。<clinit>()方法是由编译器自动收集类中的所有类变量的赋值动作和静态代码块static{}中的语句合并产生的，其中编译器收集的顺序是由语句在源文件中出现的顺序所决定。
-1. 关于类初始化的顺序**（静态变量、静态初始化块：决于它们在类中出现的先后顺序）>（变量、初始化块：决于它们在类中出现的先后顺序）>构造器**
-1. 关于类初始化的详细过程，参见 Java虚拟机规范一书中，其中类初始化过程如下：
-   1. 每个类都有一个初始化锁LC，进程获取LC，这个操作会导致当前线程一直等待，直到获取到LC锁
-   1. 如果C正在被其他线程初始化，当前线程会释放LC进去阻塞状态，并等待C初始化完成。此时当前线程需要重试这一过程。执行初始化过程时，线程的中断状态不受影响
-   1. 如果C正在被本线程初始化，即递归初始化，释放LC并且正常返回
-   1. 如果C已经被初始化完成，释放LC并且正常返回
-   1. 如果C处于错误状态，表明不可能再完成初始化，释放LC并抛出异常NoClassDefFoundError异常
-   1. 否则，将C标记为正在被本线程初始化，释放LC；然后，初始化那些final且为基础类型的类成员变量
-   1. 如果C是类而不是接口，且C的父类Super Class（SC）和各个接口SI_n（按照implements子句中的顺序来）还没有初始化，那么就在SC上面递归地进行完整的初始化过程，如果有必要，需要先验证和准备SC ；如果SC或SIn初始化过程中抛出异常，则获取LC，将C标记为错误状态，并通知所有正在等待的线程，然后释放LC，然后再抛出同样的异常。
-   1. 从C的classloader处获取assertion断言机制是否被打开
-   1. 接下来，按照文本顺序执行类变量初始化和静态代码块，或接口的字段初始化，把它们当作是一个个单独的代码块。
-   1. 如果执行正常，那就获取LC，标记C对象为已初始化，并通知所有正在等待的线程，然后释放LC，正常退出整个过程
-   1. 否则，如果抛出了异常E那么会中断退出。若E不是Error，则以E为参数创建新的异常ExceptionInInitializerError作为E。如果因为OutOfMemoryError导致无法创建ExceptionInInitializerError，则将OutOfMemoryError作为E。
-   1. 获取LC，将C标记为错误状态，通知所有等待的线程，释放LC，并抛出异常E。
-
-可以看到 JLS确实规定了父类先初始化、static块和类变量赋值按照文本顺序来
 
 
 # JVM内存模型如何分配的？
@@ -2640,105 +1849,6 @@ Parallel Scavenge收集器使用两个参数控制吞吐量：
 **应用场景**：主要也是使用在Client模式下的虚拟机中。也可在Server模式下使用。
 Server模式下主要的两大用途（在后续中详细讲解···）：
 
-1. 在JDK1.5以及以前的版本中与Parallel Scavenge收集器搭配使用。
-1. 作为CMS收集器的后备方案，在并发收集Concurent Mode Failure时使用。
-
-Serial / Serial Old收集器工作过程图（Serial收集器图示相同）：
-![](images/serial-old.png)
-**5.Parallel Old是Parallel Scavenge收集器的老年代版本。**
-**特点**：多线程，采用标记-整理算法。
-**应用场景**：注重高吞吐量以及CPU资源敏感的场合，都可以优先考虑Parallel Scavenge+Parallel Old 收集器。
-_Parallel Scavenge/Parallel Old收集器工作过程图：_
-**6.CMS收集器是一种以获取最短回收停顿时间为目标的收集器。**
-**特点**：基于标记-清除算法实现。并发收集、低停顿。
-**应用场景**：适用于注重服务的响应速度，希望系统停顿时间最短，给用户带来更好的体验等场景下。如web程序、b/s服务。
-**CMS收集器的运行过程分为下列4步：**
-**初始标记**：标记GC Roots能直接到的对象。速度很快但是仍存在Stop The World问题。
-**并发标记**：进行GC Roots Tracing 的过程，找出存活对象且用户线程可并发执行。
-**重新标记**：为了修正并发标记期间因用户程序继续运行而导致标记产生变动的那一部分对象的标记记录。仍然存在Stop The World问题。
-**并发清除**：对标记的对象进行清除回收。
-CMS收集器的内存回收过程是与用户线程一起并发执行的。
- CMS收集器的工作过程图：
-![](images/cms.png)
-CMS收集器的缺点：
-
-- 对CPU资源非常敏感。
-- 无法处理浮动垃圾，可能出现Concurrent Model Failure失败而导致另一次Full GC的产生。
-- 因为采用标记-清除算法所以会存在空间碎片的问题，导致大对象无法分配空间，不得不提前触发一次Full GC。![](images/cms2.png)
-
-**​**
-
-**7.G1收集器一款面向服务端应用的垃圾收集器。**
-**特点如下：**
-并行与并发：G1能充分利用多CPU、多核环境下的硬件优势，使用多个CPU来缩短Stop-The-World停顿时间。部分收集器原本需要停顿Java线程来执行GC动作，G1收集器仍然可以通过并发的方式让Java程序继续运行。
-分代收集：G1能够独自管理整个Java堆，并且采用不同的方式去处理新创建的对象和已经存活了一段时间、熬过多次GC的旧对象以获取更好的收集效果。
-空间整合：G1运作期间不会产生空间碎片，收集后能提供规整的可用内存。
-可预测的停顿：G1除了追求低停顿外，还能建立可预测的停顿时间模型。能让使用者明确指定在一个长度为M毫秒的时间段内，消耗在垃圾收集上的时间不得超过N毫秒。
-**G1收集器运行示意图：**
-![](images/g1.png)
-**​**
-
-关于gc的选择
-除非应用程序有非常严格的暂停时间要求，否则请先运行应用程序并允许VM选择收集器（如果没有特别要求。使用VM提供给的默认GC就好）。
-如有必要，调整堆大小以提高性能。 如果性能仍然不能满足目标，请使用以下准则作为选择收集器的起点：
-
-   - 如果应用程序的数据集较小（最大约100 MB），则选择带有选项-XX：+ UseSerialGC的串行收集器。
-   - 如果应用程序将在单个处理器上运行，并且没有暂停时间要求，则选择带有选项-XX：+ UseSerialGC的串行收集器。
-   - 如果（a）峰值应用程序性能是第一要务，并且（b）没有暂停时间要求或可接受一秒或更长时间的暂停，则让VM选择收集器或使用-XX：+ UseParallelGC选择并行收集器 。
-   - 如果响应时间比整体吞吐量更重要，并且垃圾收集暂停时间必须保持在大约一秒钟以内，则选择具有-XX：+ UseG1GC。（值得注意的是JDK9中CMS已经被Deprecated，不可使用！移除该选项）
-   - 如果使用的是jdk8，并且堆内存达到了16G，那么推荐使用G1收集器，来控制每次垃圾收集的时间。
-   - 如果响应时间是高优先级，或使用的堆非常大，请使用-XX：UseZGC选择完全并发的收集器。（值得注意的是JDK11开始可以启动ZGC，但是此时ZGC具有实验性质，在JDK15中[202009发布]才取消实验性质的标签，可以直接显示启用，但是JDK15默认GC仍然是G1）
-
-
-
-这些准则仅提供选择收集器的起点，因为性能取决于堆的大小，应用程序维护的实时数据量以及可用处理器的数量和速度。
-如果推荐的收集器没有达到所需的性能，则首先尝试调整堆和新生代大小以达到所需的目标。 如果性能仍然不足，尝试使用其他收集器
-**总体原则**：减少STOP THE WORD时间，使用并发收集器（比如CMS+ParNew，G1）来减少暂停时间，加快响应时间，并使用并行收集器来增加多处理器硬件上的总体吞吐量。
-
-# JVM8为什么要增加元空间？
-
-原因：
-1、字符串存在永久代中，容易出现性能问题和内存溢出。
-2、类及方法的信息等比较难确定其大小，因此对于永久代的大小指定比较困难，太小容易出现永久代溢出，太大则容易导致老年代溢出。
-3、永久代会为 GC 带来不必要的复杂度，并且回收效率偏低。
-
-# JVM8中元空间有哪些特点？
-
-1，每个加载器有专门的存储空间。
-2，不会单独回收某个类。
-3，元空间里的对象的位置是固定的。
-4，如果发现某个加载器不再存货了，会把相关的空间整个回收
-
-#  如何解决线上gc频繁的问题？
-
-1. 查看监控，以了解出现问题的时间点以及当前FGC的频率（可对比正常情况看频率是否正常）
-1. 了解该时间点之前有没有程序上线、基础组件升级等情况。
-1. 了解JVM的参数设置，包括：堆空间各个区域的大小设置，新生代和老年代分别采用了哪些垃圾收集器，然后分析JVM参数设置是否合理。
-1. 再对步骤1中列出的可能原因做排除法，其中元空间被打满、内存泄漏、代码显式调用gc方法比较容易排查。
-1. 针对大对象或者长生命周期对象导致的FGC，可通过 jmap -histo 命令并结合dump堆内存文件作进一步分析，需要先定位到可疑对象。
-1. 通过可疑对象定位到具体代码再次分析，这时候要结合GC原理和JVM参数设置，弄清楚可疑对象是否满足了进入到老年代的条件才能下结论。
-
-# 内存溢出的原因有哪些，如何排查线上问题？
-
-1. java.lang.OutOfMemoryError: ......java heap space.....   堆栈溢出，代码问题的可能性极大
-1. java.lang.OutOfMemoryError: GC over head limit exceeded 系统处于高频的GC状态，而且回收的效果依然不佳的情况，就会开始报这个错误，这种情况一般是产生了很多不可以被释放的对象，有可能是引用使用不当导致，或申请大对象导致，但是java heap space的内存溢出有可能提前不会报这个错误，也就是可能内存就直接不够导致，而不是高频GC.
-1. java.lang.OutOfMemoryError: PermGen space jdk1.7之前才会出现的问题 ，原因是系统的代码非常多或引用的第三方包非常多、或代码中使用了大量的常量、或通过intern注入常量、或者通过动态代码加载等方法，导致常量池的膨胀
-1. java.lang.OutOfMemoryError: Direct buffer memory    直接内存不足，因为jvm垃圾回收不会回收掉直接内存这部分的内存，所以可能原因是直接或间接使用了ByteBuffer中的allocateDirect方法的时候，而没有做clear
-1. java.lang.StackOverflowError -     Xss设置的太小了
-1. java.lang.OutOfMemoryError: unable to create new native thread 堆外内存不足，无法为线程分配内存区域
-1. java.lang.OutOfMemoryError: request {} byte for {}out of swap 地址空间不够
-
-# Happens-Before规则是什么？
-
-1. 程序顺序规则：一个线程中的每一个操作，happens-before于该线程中的任意后续操作。
-1. 监视器规则：对一个锁的解锁，happens-before于随后对这个锁的加锁。
-1. volatile规则：对一个volatile变量的写，happens-before于任意后续对一个volatile变量的读。
-1. 传递性：若果A happens-before B，B happens-before C，那么A happens-before C。
-1. 线程启动规则：Thread对象的start()方法，happens-before于这个线程的任意后续操作。
-1. 线程终止规则：线程中的任意操作，happens-before于该线程的终止监测。我们可以通过Thread.join()方法结束、Thread.isAlive()的返回值等手段检测到线程已经终止执行。
-1. 线程中断操作：对线程interrupt()方法的调用，happens-before于被中断线程的代码检测到中断事件的发生，可以通过Thread.interrupted()方法检测到线程是否有中断发生。
-1. 对象终结规则：一个对象的初始化完成，happens-before于这个对象的finalize()方法的开始。
-
 # 介绍一下线程的生命周期及状态？
 
 ![未命名文件.jpg](images/life.jpg)
@@ -2861,89 +1971,44 @@ public void remove() {
 思考这么一个问题：任务结束后会不会回收线程？
 答案是：allowCoreThreadTimeOut控制
 
-```java
-/java/util/concurrent/ThreadPoolExecutor.java:1127
-final void runWorker(Worker w) {
-        Thread wt = Thread.currentThread();
-        Runnable task = w.firstTask;
-        w.firstTask = null;
-        w.unlock(); // allow interrupts
-        boolean completedAbruptly = true;
-        try {
-            while (task != null || (task = getTask()) != null) {...执行任务...}
-            completedAbruptly = false;
-        } finally {
-            processWorkerExit(w, completedAbruptly);
-        }
-    }
-首先线程池内的线程都被包装成了一个个的java.util.concurrent.ThreadPoolExecutor.Worker,然后这个worker会马不停蹄的执行任务,执行完任务之后就会在while循环中去取任务,取到任务就继续执行,取不到任务就跳出while循环(这个时候worker就不能再执行任务了)执行 processWorkerExit方法,这个方法呢就是做清场处理,将当前woker线程从线程池中移除,并且判断是否是异常的进入processWorkerExit方法,如果是非异常情况,就对当前线程池状态(RUNNING,shutdown)和当前工作线程数和当前任务数做判断,是否要加入一个新的线程去完成最后的任务(防止没有线程去做剩下的任务).
-那么什么时候会退出while循环呢?取不到任务的时候(getTask() == null).下面看一下getTask方法
-
-private Runnable getTask() {
-        boolean timedOut = false; // Did the last poll() time out?
-
-        for (;;) {
-            int c = ctl.get();
-            int rs = runStateOf(c);
-
-            //(rs == SHUTDOWN && workQueue.isEmpty()) || rs >=STOP
-            //若线程池状态是SHUTDOWN 并且 任务队列为空,意味着已经不需要工作线程执行任务了,线程池即将关闭
-            //若线程池的状态是 STOP TIDYING TERMINATED,则意味着线程池已经停止处理任何任务了,不在需要线程
-            if (rs >= SHUTDOWN && (rs >= STOP || workQueue.isEmpty())) {
-            	//把此工作线程从线程池中删除
-                decrementWorkerCount();
-                return null;
-            }
-
-            int wc = workerCountOf(c);
-
-            //allowCoreThreadTimeOut:当没有任务的时候,核心线程数也会被剔除,默认参数是false,官方推荐在创建线程池并且还未使用的时候,设置此值
-            //如果当前工作线程数 大于 核心线程数,timed为true
-            boolean timed = allowCoreThreadTimeOut || wc > corePoolSize;
-			
-            //(wc > maximumPoolSize || (timed && timedOut)):当工作线程超过最大线程数,或者 允许超时并且超时过一次了
-            //(wc > 1 || workQueue.isEmpty()):工作线程数至少为1个 或者 没有任务了
-            //总的来说判断当前工作线程还有没有必要等着拿任务去执行
-            //wc > maximumPoolSize && wc>1 : 就是判断当前工作线程是否超过最大值
-            //或者 wc > maximumPoolSize && workQueue.isEmpty():工作线程超过最大,基本上不会走到这,
-            //		如果走到这,则意味着wc=1 ,只有1个工作线程了,如果此时任务队列是空的,则把最后的线程删除
-            //或者(timed && timedOut) && wc>1:如果允许超时并且超时过一次,并且至少有1个线程,则删除线程
-            //或者 (timed && timedOut) && workQueue.isEmpty():如果允许超时并且超时过一次,并且此时工作					队列为空，那么妥妥可以把最后一个线程（因为上面的wc>1不满足，则可以得出来wc=1）删除
-            if ((wc > maximumPoolSize  || (timed && timedOut))
-                && (wc > 1 || workQueue.isEmpty())) {
-                if (compareAndDecrementWorkerCount(c))
-                	//如果减去工作线程数成功,则返回null出去,也就是说 让工作线程停止while轮训,进行收尾
-                    return null;
-                continue;
-            }
-
-            try {
-            	//判断是否要阻塞获取任务
-                Runnable r = timed ?
-                    workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) :
-                    workQueue.take();
-                if (r != null)
-                    return r;
-                timedOut = true;
-            } catch (InterruptedException retry) {
-                timedOut = false;
-            }
-        }
-    }
-    
-//综上所述,如果allowCoreThreadTimeOut为true,并且在第1次阻塞获取任务失败了,那么当前getTask会返回null,不管是不是核心线程;那么runWorker中将推出while循环,也就意味着当前工作线程被销毁
-
-```
-
-通过上面这个问题可以得出一个结论：当你的线程池参数配置合理的时候，执行完任务的线程是不会被销毁的，而是会从任务队列中取出任务继续执行！
-
 # 如何预防死锁？
 
 1. 首先需要将死锁发生的是个必要条件讲出来:
-   1. 互斥条件 同一时间只能有一个线程获取资源。
-   1. 不可剥夺条件 一个线程已经占有的资源，在释放之前不会被其它线程抢占
-   1. 请求和保持条件 线程等待过程中不会释放已占有的资源
-   1. 循环等待条件 多个线程互相等待对方释放资源
+   比如：
+   ```java
+    new Thread(()->{
+               System.out.println("T1开始了...");
+               synchronized (A){
+                   System.out.println("线1拿到A锁");
+                   try {
+                       Thread.sleep(100);
+                       synchronized (B){
+                           System.out.println("T1拿到B锁");
+                       }
+                   } catch (InterruptedException e) {
+                       e.printStackTrace();
+                   }
+               }
+           },"t1").start();
+    
+    
+           new Thread(()-> {
+               System.out.println("T2开始了...");
+               synchronized (B){
+    
+                   System.out.println("T2拿到B锁" );
+                   try {
+                       Thread.sleep(100L);
+                       synchronized (A){
+                           System.out.println("T2拿到A锁");
+                       }
+                   } catch (InterruptedException e) {
+                       e.printStackTrace();
+                   }
+               }
+           }).start();
+   ```
+   
 2. 死锁预防，那么就是需要破坏这四个必要条件
    1. 由于资源互斥是资源使用的固有特性，无法改变，我们不讨论
    1. 破坏不可剥夺条件
@@ -2954,28 +2019,7 @@ private Runnable getTask() {
 4. 破坏循环等待条件
    1. 采用资源有序分配其基本思想是将系统中的所有资源顺序编号，将紧缺的，稀少的采用较大的编号，在申请资源时必须按照编号的顺序进行，一个进程只有获得较小编号的进程才能申请较大编号的进程。
 
-# 描述一下线程安全活跃态问题？
 
-线程安全的活跃性问题可以分为 死锁、活锁、饥饿   
-1. 活锁 就是有时线程虽然没有发生阻塞，但是仍然会存在执行不下去的情况，活锁不会阻塞线程，线程会一直重复执行某个相同的操作，并且一直失败重试
-   1. 我们开发中使用的异步消息队列就有可能造成活锁的问题，在消息队列的消费端如果没有正确的ack消息，并且执行过程中报错了，就会再次放回消息头，然后再拿出来执行，一直循环往复的失败。这个问题除了正确的ack之外，往往是通过将失败的消息放入到延时队列中，等到一定的延时再进行重试来解决。
-   1. 解决活锁的方案很简单，尝试等待一个随机的时间就可以，会按时间轮去重试
-2. 饥饿  就是 线程因无法访问所需资源而无法执行下去的情况
-   1. 饥饿 分为两种情况：
-      1. 一种是其他的线程在临界区做了无限循环或无限制等待资源的操作，让其他的线程一直不能拿到锁进入临界区，对其他线程来说，就进入了饥饿状态
-      1. 另一种是因为线程优先级不合理的分配，导致部分线程始终无法获取到CPU资源而一直无法执行
-   2. 解决饥饿的问题有几种方案:
-      1.  保证资源充足，很多场景下，资源的稀缺性无法解决
-      1.  公平分配资源，在并发编程里使用公平锁，例如FIFO策略，线程等待是有顺序的，排在等待队列前面的线程会优先获得资源
-      1.  避免持有锁的线程长时间执行，很多场景下，持有锁的线程的执行时间也很难缩短
-3. 死锁  线程在对同一把锁进行竞争的时候，未抢占到锁的线程会等待持有锁的线程释放锁后继续抢占，如果两个或两个以上的线程互相持有对方将要抢占的锁，互相等待对方先行释放锁就会进入到一个循环等待的过程，这个过程就叫做死锁
-
-# 线程安全的竞态条件有哪些？
-
-1. 同一个程序多线程访问同一个资源，如果对资源的访问顺序敏感，就称存在竞态条件，代码区成为临界区。 大多数并发错误一样，竞态条件不总是会产生问题，还需要不恰当的执行时序
-1. 最常见的竞态条件为
-   1. 先检测后执行执行依赖于检测的结果，而检测结果依赖于多个线程的执行时序，而多个线程的执行时序通常情况下是不固定不可判断的，从而导致执行结果出现各种问题，见一种可能 的解决办法就是：在一个线程修改访问一个状态时，要防止其他线程访问修改，也就是加锁机制，保证原子性
-   1. 延迟初始化（典型为单例）
 
 # 程序开多少线程合适？
 
